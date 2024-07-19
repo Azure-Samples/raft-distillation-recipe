@@ -1,0 +1,47 @@
+id: bring_your_own_data_qna
+name: Bring Your Own Data QnA
+inputs:
+  question:
+    type: string
+    default: What kind of vision do most microbats have?
+    is_chat_input: false
+  context:
+    type: string
+    default: <DOCUMENT>These bats must dealwith changes in the Doppler shift due to changes in their flightspeed. They have adapted to change their pulse emissionfrequency in relation to their flight speed so echoes still return inthe optimal hearing range.[94][95]In addition to echolocating prey, bat ears are sensitive to soundsmade by their prey, such as the fluttering of moth wings. Thecomplex geometry of ridges on the inner surface of bat ears helps to sharply focus echolocation signals, and topassively listen for any other sound produced by the prey. These ridges can be regarded as the acousticequivalent of a Fresnel lens, and exist in a large variety of unrelated animals, such as the aye-aye, lesser galago,bat-eared fox, mouse lemur, and others.[96][97][98] Bats can estimate the elevation of their target using theinterference patterns from the echoes reflecting from the tragus, a flap of skin in the external ear.[92]By repeated scanning, bats can mentally construct an accurate image of theenvironment in which they are moving and of their prey.[101] Some speciesof moth have exploited this, such as the tiger moths, which producesaposematic ultrasound signals to warn bats that they are chemicallyprotected and therefore distasteful.[99][100] Moth species including the tigermoth can produce signals to jam bat echolocation. Many moth species havea hearing organ called a tympanum, which responds to an incoming batsignal by causing the moth's flight muscles to twitch erratically, sending themoth into random evasive manoeuvres.[102][103][104]The eyes of most microbat species are small and poorly developed, leadingto poor visual acuity, but no species is blind.[105] Most microbats have mesopic vision, meaning that they candetect light only in low levels, whereas other mammals have photopic vision, which allows colour vision.Microbats may use their vision for orientation and while travelling between their roosting grounds and feedinggrounds, as echolocation is effective only over short distances.</DOCUMENT> <DOCUMENT>She reads hisjournal and passes it along to Van Helsing. This unfolds the first clue to the identity of Lucy'sassailant, which later prompts Mina to collect all of the events of Dracula's appearance in newsarticles, saved letters, newspaper clippings and the journals of each member of the group. This assiststhe group in investigating Dracula's movements and later discovering that Renfield's behaviour isdirectly influenced by Dracula.</DOCUMENT> <DOCUMENT>The recent development offoilboards, which plane very early on a hydrofoil fin and therebylift off the water producing low friction, represent the idealcomplementary hydrodynamic platform for wings.[3]The history of wing foiling, or simply "winging" begins with theinvention of pre-hydrofoil technology wing surfing dating back to1981, when aeronautical engineer Jim Drake, the same individualwho also invented windsurfing,[4] and Uli Stanciu, Europeanwindsurfing pioneer, together invented and patented the world'sfirst wing.[5] Their patented concept was used on a large, non-foiling windsurf board of that era. Drake's wing was theoreticallybased on the symmetrical shape of a flying fish.</DOCUMENT> <DOCUMENT>Thus vampires were merely sufferers of porphyria seeking toreplace haem and alleviate their symptoms.[133]The theory has been rebuffed medically as suggestions that porphyria sufferers crave the haem inhuman blood, or that the consumption of blood might ease the symptoms of porphyria, are based on amisunderstanding of the disease. Furthermore, Dolphin was noted to have confused fictional(bloodsucking) vampires with those of folklore, many of whom were not noted to drink blood.[134]Similarly, a parallel is made between sensitivity to sunlight by sufferers, yet this was associated withfictional and not folkloric vampires.</DOCUMENT>
+    is_chat_input: false
+outputs:
+  answer:
+    type: string
+    reference: ${extract_final_answer.output}
+  explanation:
+    type: string
+    reference: ${llama2_7b_finetuned_model.output}
+nodes:
+- name: construct_prompt_with_context
+  type: prompt
+  source:
+    type: code
+    path: prompt.jinja2
+  inputs:
+    context: ${inputs.context}
+    question: ${inputs.question}
+  use_variants: false
+- name: llama2_7b_finetuned_model
+  type: python
+  source:
+    type: code
+    path: test_llm.py
+  inputs:
+    prompt: ${construct_prompt_with_context.output}
+  use_variants: false
+- name: extract_final_answer
+  type: python
+  source:
+    type: code
+    path: extract_final_answer.py
+  inputs:
+    cot_answer: ${llama2_7b_finetuned_model.output}
+  use_variants: false
+node_variants: {}
+environment:
+  python_requirements_txt: requirements.txt
