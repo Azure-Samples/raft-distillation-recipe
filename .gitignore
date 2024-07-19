@@ -3,3 +3,5 @@
 dataset
 .DS_Store
 config.json
+.env
+.gorilla/
