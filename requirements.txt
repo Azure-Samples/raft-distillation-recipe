@@ -11,3 +11,8 @@ coloredlogs==15.0.1
 mdc==1.2.1
 pytest==8.1.2
 wand
+
+promptflow-core==1.13.0
+promptflow-devkit==1.13.0
+promptflow-evals==0.3.1
+promptflow-tracing==1.13.0
