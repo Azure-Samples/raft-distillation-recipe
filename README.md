@@ -4,4 +4,6 @@ This repository is a recipe that will walk you through using Meta Llama 3.1 405B
 
 Start with the [gen](./gen.ipynb) notebook.
 
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/cedricvidal/llama-raft-recipe)
+
 ![Gorilla Student](./doc/student-gorilla.jpeg "Student Gorilla")
