@@ -5,3 +5,4 @@ dataset
 config.json
 .env
 .gorilla/
+__pycache__
