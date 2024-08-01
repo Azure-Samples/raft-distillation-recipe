@@ -1,16 +1,7 @@
-# RAFT Notebooks
+# Llama 3.1 405B distillation using UC Berkeley's RAFT recipe
 
-## Endpoints needed
+This repository is a recipe that will walk you through using Meta Llama 3.1 405B deployed on Azure AI to generate a synthetic dataset using UC Berkeley's Gorilla project RAFT method (see [blog post](https://aka.ms/raft-blog)). The synthetically generated dataset will be used to finetune a Llama 3.1 8B model. Finally, we will evaluate the performance of the fine tuned model and compare it to the baseline model.
 
-### Gen notebook
+Start with the [gen](./gen.ipynb) notebook.
 
-| Use | Models | Env vars |
-| --- | --- | --- |
-| Dataset generation completion model | Llama 2 70B, Llama 3 80B, Llama 3.1 405B | `COMPLETION_OPENAI_BASE_URL`<br>`COMPLETION_OPENAI_API_KEY` |
-| Dataset generation embedding model | ADA 002 | `EMBEDDING_AZURE_OPENAI_ENDPOINT`<br>`EMBEDDING_AZURE_OPENAI_API_KEY`<br>`EMBEDDING_OPENAI_API_VERSION` |
-
-### Eval notebook
-
-| Use | Models | Env vars |
-| --- | --- | --- |
-| Scoring | GPT 4 Turbo | `SCORE_AZURE_OPENAI_ENDPOINT`<br>`SCORE_AZURE_OPENAI_API_KEY`<br>`SCORE_OPENAI_API_VERSION`<br>`SCORE_AZURE_OPENAI_DEPLOYMENT` |
+![Gorilla Student](./doc/student-gorilla.jpeg "Student Gorilla")
