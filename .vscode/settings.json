@@ -1,0 +1,12 @@
+{
+    "terminal.integrated.env.osx": {
+      "PYTHONPATH": "${env:PYTHONPATH}:${workspaceFolder}/.gorilla/raft",
+    },
+    "terminal.integrated.env.linux": {
+      "PYTHONPATH": "${env:PYTHONPATH}:${workspaceFolder}/.gorilla/raft",
+    },
+    "terminal.integrated.env.windows": {
+      "PYTHONPATH": "${env:PYTHONPATH}:${workspaceFolder}/.gorilla/raft",
+    },
+    "python.envFile": "${workspaceFolder}/.vscode/python.env"
+}
