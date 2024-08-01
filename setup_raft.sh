@@ -11,3 +11,4 @@ fi
 cd ${RAFT_DIR}
 git sparse-checkout set --no-cone raft
 git checkout
+git pull
