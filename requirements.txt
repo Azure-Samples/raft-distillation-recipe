@@ -18,3 +18,6 @@ promptflow-tracing==1.14.0
 promptflow-azure==1.14.0
 
 promptflow-evals==0.3.1
+
+matplotlib==3.9.1
+numpy==1.26.4

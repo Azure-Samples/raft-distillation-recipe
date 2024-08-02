@@ -1,6 +1,6 @@
 *.log
 .direnv
-dataset
+dataset*
 .DS_Store
 config.json
 .env
