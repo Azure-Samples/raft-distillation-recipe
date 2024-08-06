@@ -21,3 +21,6 @@ promptflow-evals==0.3.1
 
 matplotlib==3.9.1
 numpy==1.26.4
+
+# To run notebooks from the command line
+papermill==2.6.0
