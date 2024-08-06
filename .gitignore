@@ -7,3 +7,4 @@ config.json
 .gorilla/
 __pycache__
 .env.state
+work/
