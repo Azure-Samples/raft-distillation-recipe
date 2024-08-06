@@ -30,3 +30,37 @@ def get_reporting_project_scope():
     else:
         print("Skipping AI Studio Reporting")
     return project_scope_report
+
+def update_state_json(key, value):
+    from pathlib import Path
+    import json
+    data = {}
+    state_filename = 'state.json'
+    if Path(state_filename).exists() and Path(state_filename).is_file():
+        with open(state_filename, 'r') as f:
+            data = json.load(f)
+    data[key] = value
+    with open(state_filename, 'w') as f:
+        json.dump(data, f, indent=4)
+
+def read_state_json(key):
+    from pathlib import Path
+    import json
+    data = {}
+    state_filename = 'state.json'
+    if Path(state_filename).exists() and Path(state_filename).is_file():
+        with open(state_filename, 'r') as f:
+            data = json.load(f)
+    return data.get(key, None)
+
+def update_state(key, value):
+    from pathlib import Path
+    from dotenv import dotenv_values
+    data = {}
+    state_filename = '.env.state'
+    if Path(state_filename).exists() and Path(state_filename).is_file():
+        data = dotenv_values(state_filename)
+    data[key] = value
+    with open(state_filename, 'w') as f:
+        for k, v in data.items():
+            f.write(f"{k}={v}\n")
