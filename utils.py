@@ -59,3 +59,9 @@ def wait_for_model(client, model_name):
             print(f"Model not found yet #{attempts}")
             attempts += 1
             time.sleep(30)
+
+def file_sha256(filename):
+    """Returns the SHA256 hash of a file."""
+    import hashlib
+    with open(filename, 'rb', buffering=0) as f:
+        return hashlib.file_digest(f, 'sha256').hexdigest()
