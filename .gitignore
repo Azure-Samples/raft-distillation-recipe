@@ -6,3 +6,4 @@ config.json
 .env
 .gorilla/
 __pycache__
+.env.state
