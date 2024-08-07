@@ -15,6 +15,11 @@
 	// Use 'postCreateCommand' to run commands after the container is created.
 	"postCreateCommand": "sh ${containerWorkspaceFolder}/.devcontainer/post-create.sh",
 
+	"containerEnv": {
+		// When running dataset generation in Dev Container, space can fill up pretty quickly, so store cache in workspace folder
+		"HF_DATASETS_CACHE": "${containerWorkspaceFolder}/.cache/huggingface/datasets"
+	},
+
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
 
