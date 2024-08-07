@@ -1,5 +1,9 @@
 # Llama 3.1 405B distillation using UC Berkeley's RAFT recipe on Azure AI Serverless
 
+
+![Gorilla distilling](./doc/gorilla-distillation.png "Gorilla distilling")
+*Generated using DALL-e 3 on Azure AI*
+
 This repository is a recipe that will walk you through using [Meta Llama 3.1 405B](https://aka.ms/c/learn-deploy-llama) deployed on [Azure AI](https://aka.ms/c/learn-ai) to generate a synthetic dataset using [UC Berkeley's Gorilla](https://aka.ms/ucb-gorilla) project RAFT method (see [blog post](https://aka.ms/raft-blog)). The synthetically generated dataset will be used to finetune a selection of student models. Finally, we will evaluate the performance of the fine tuned model and compare it to the baseline model.
 
 This repository is organized in 4 notebooks, one for each step of the process:
@@ -34,5 +38,3 @@ Notebooks can be run all at once with a given parameter file using the following
 ```
 ./run_all.sh -p ./parameters/Llama-2-7b.yaml
 ```
-
-![Gorilla Student](./doc/student-gorilla.jpeg "Student Gorilla")
