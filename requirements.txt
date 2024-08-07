@@ -19,6 +19,12 @@ promptflow-azure==1.14.0
 
 promptflow-evals==0.3.1
 
+# Fine-tuning
+azure-ai-ml
+azure-identity
+mlflow
+azureml-mlflow
+
 matplotlib==3.9.1
 numpy==1.26.4
 
