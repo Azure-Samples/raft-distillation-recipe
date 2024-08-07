@@ -2,7 +2,7 @@ ipykernel
 datasets==2.16.1
 openai==1.30.1
 PyPDF2==3.0.1
-transformers==4.37.2
+transformers==4.38.0
 langchain_experimental
 langchain_openai
 python-dotenv==1.0.1
