@@ -2,7 +2,7 @@
 
 
 <p align="center">
-    <img src="./doc/gorilla-distillation.png" width="75%" />
+    <img src="./doc/gorilla-distillation.jpeg" width="75%" />
     <p align="center"><i>Generated using DALL-e 3 on Azure AI</i></p>
 </p>
 
