@@ -1,2 +1,3 @@
 model_name: Llama-2-7b
 format: completion
+learning_rate: 0.0002
