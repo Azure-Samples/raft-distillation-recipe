@@ -15,7 +15,7 @@ This repository is organized in 4 notebooks, one for each step of the process:
 
 ## Parameterized execution
 
-In addition to executing notebooks interactively, the notebooks also support parameterized execution using [papermill](https://papermill.readthedocs.io/).
+In addition to executing notebooks interactively, the notebooks also support parameterized command line execution using [papermill](https://papermill.readthedocs.io/).
 
 ### Parameter files
 
