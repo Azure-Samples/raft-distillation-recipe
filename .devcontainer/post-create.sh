@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 echo "Downloading RAFT code"
 sh setup_raft.sh
 
