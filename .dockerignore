@@ -1,0 +1,6 @@
+# Ignore everything
+*
+
+# Allow requirements.txt
+!/requirements.txt
+!/.devcontainer

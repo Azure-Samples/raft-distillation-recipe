@@ -3,7 +3,10 @@
 {
 	"name": "Python 3.12 with RAFT and az CLI",
 	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-	"image": "mcr.microsoft.com/devcontainers/python:1-3.12-bullseye",
+	"build": {
+		"dockerfile": "Dockerfile",
+		"context": ".."
+	},
 	"customizations": {
 		"vscode": {
 			"extensions": [
@@ -11,9 +14,6 @@
 			]
 		}
 	},
-
-	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "sh ${containerWorkspaceFolder}/.devcontainer/post-create.sh",
 
 	"containerEnv": {
 		// When running dataset generation in Dev Container, space can fill up pretty quickly, so store cache in workspace folder
