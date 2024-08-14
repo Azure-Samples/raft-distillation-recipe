@@ -11,6 +11,7 @@ coloredlogs==15.0.1
 mdc==1.2.1
 pytest==8.1.2
 wand
+strictyaml==1.7.3
 
 promptflow-core==1.14.0
 promptflow-devkit==1.14.0
