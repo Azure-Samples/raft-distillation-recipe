@@ -30,6 +30,17 @@ This repository is organized in 4 notebooks, one for each step of the process:
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/Azure-Samples/llama-raft-recipe)
 
+## Run time and cost
+
+**Warning**: The times and costs mentioned bellow are indications to give you a sense of what to expect but can vary dramatically depending on your experience, please monitor your usage to avoid surprises.
+
+| Notebook      | Run time      | Cost      |
+| ------------- | ---------------- | ---------------- |
+| [0_gen.ipynb](./0_gen.ipynb) | From 5 minutes for the sample to multiple days for bigger domains | From $1 for the sample to $50 or more for bigger domains  |
+| [1_finetune.ipynb](./1_finetune.ipynb) | Roughly 1.5 hours | Roughly $50 |
+| [2_deploy.ipynb](./2_deploy.ipynb) | < 10 minutes | < $1 |
+| [3_eval.ipynb](./3_eval.ipynb) | From 5 minutes for the sample to multiple days for bigger domains | From $1 for the sample to $50 or more for bigger domains |
+
 ## Configuration files
 
 | File      | Explanation      |
