@@ -15,6 +15,9 @@
 		}
 	},
 
+	// Use 'postCreateCommand' to run commands after the container is created.
+	"postCreateCommand": "sh ${containerWorkspaceFolder}/setup_raft.sh",
+
 	"containerEnv": {
 		// When running dataset generation in Dev Container, space can fill up pretty quickly, so store cache in workspace folder
 		"HF_DATASETS_CACHE": "${containerWorkspaceFolder}/.cache/huggingface/datasets"
