@@ -6,7 +6,15 @@
     <p align="center"><i>Generated using DALL-e 3 on Azure AI</i></p>
 </p>
 
-This repository is a recipe that will walk you through using [Meta Llama 3.1 405B](https://aka.ms/c/learn-deploy-llama) deployed on [Azure AI](https://aka.ms/c/learn-ai) to generate a synthetic dataset using [UC Berkeley's Gorilla](https://aka.ms/ucb-gorilla) project RAFT method (see [blog post](https://aka.ms/raft-blog)). The synthetically generated dataset will be used to finetune a selection of student models. Finally, we will evaluate the performance of the fine tuned model and compare it to the baseline model.
+This repository is a recipe that will walk you through using [Meta Llama 3.1 405B](https://aka.ms/c/learn-deploy-llama) deployed on [Azure AI](https://aka.ms/c/learn-ai) to generate a synthetic dataset using [UC Berkeley's Gorilla](https://aka.ms/ucb-gorilla) project RAFT method (see [blog post](https://aka.ms/raft-blog)). The synthetically generated dataset will be used to finetune a selection of student models. Finally, we will deploy the fine-tuned model and evaluate its performance compared to a baseline model.
+
+<table>
+    <tr>
+        <td><img src="./doc/microsoft-logo.png" style="max-height:100px; height: auto;"/></td>
+        <td><img src="./doc/meta-logo.png" style="max-height:100px; height: auto;" /></td>
+        <td><img src="./doc/ucb-logo.png" style="max-height:100px; height: auto;" /></td>
+    </tr>
+</table>
 
 ## More about RAFT
 
