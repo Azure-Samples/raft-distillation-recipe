@@ -17,7 +17,7 @@ This repository is organized in 4 notebooks, one for each step of the process:
 | [2_deploy.ipynb](./2_deploy.ipynb) | Deploy the fine tuned model |
 | [3_eval.ipynb](./3_eval.ipynb) | Evaluate the fine tuned model |
 
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/cedricvidal/llama-raft-recipe)
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/Azure-Samples/llama-raft-recipe)
 
 ## Configuration files
 
