@@ -19,6 +19,14 @@ This repository is organized in 4 notebooks, one for each step of the process:
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/cedricvidal/llama-raft-recipe)
 
+## Configuration files
+
+| File      | Explanation      |
+| ------------- | ---------------- |
+| [.env](./.env) | User provided environment variables read by notebooks and scripts |
+| [.env.state](./.env.state) | Environment variables for resources created during notebooks execution and shared by all notebooks |
+| [config.json](./config.json) | Configuration necessary to connect to the Azure AI Studio Hub and Azure ML Workspace |
+
 ## Parameterized execution
 
 In addition to executing notebooks interactively, the notebooks also support parameterized command line execution using [papermill](https://papermill.readthedocs.io/).
