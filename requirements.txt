@@ -26,6 +26,12 @@ mlflow==2.15.1
 azureml-mlflow==1.57.0
 matplotlib==3.9.1
 numpy==1.26.4
+
 # To run notebooks from the command line
 papermill==2.6.0
 black[jupyter]==24.8.0
+
+# Azure ML Infra
+azureml-core
+msrestazure
+azure-mgmt-resource
