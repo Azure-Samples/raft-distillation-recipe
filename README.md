@@ -23,10 +23,11 @@ This repository is organized in 4 notebooks, one for each step of the process:
 
 | Notebook      | Explanation      |
 | ------------- | ---------------- |
-| [0_gen.ipynb](./0_gen.ipynb) (**Start here**) | Generate a finetuning dataset using RAFT |
-| [1_finetune.ipynb](./1_finetune.ipynb) | Fine tune a base model using the generated dataset |
-| [2_deploy.ipynb](./2_deploy.ipynb) | Deploy the fine tuned model |
-| [3_eval.ipynb](./3_eval.ipynb) | Evaluate the fine tuned model |
+| [0_workspace.ipynb](./0_workspace.ipynb) (**Start here**) | Configure or provisions an Azure AI Studio Hub (same as an Azure ML Workspace) |
+| [1_gen.ipynb](./1_gen.ipynb) | Generate a finetuning dataset using RAFT |
+| [2_finetune.ipynb](./2_finetune.ipynb) | Fine tune a base model using the generated dataset |
+| [3_deploy.ipynb](./3_deploy.ipynb) | Deploy the fine tuned model |
+| [4_eval.ipynb](./4_eval.ipynb) | Evaluate the fine tuned model |
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/Azure-Samples/llama-raft-recipe)
 
@@ -36,10 +37,11 @@ This repository is organized in 4 notebooks, one for each step of the process:
 
 | Notebook      | Run time      | Cost      |
 | ------------- | ---------------- | ---------------- |
-| [0_gen.ipynb](./0_gen.ipynb) | From 5 minutes for the sample to multiple days for bigger domains | From $1 for the sample to $50 or more for bigger domains  |
-| [1_finetune.ipynb](./1_finetune.ipynb) | Roughly 1.5 hours | Roughly $50 |
-| [2_deploy.ipynb](./2_deploy.ipynb) | < 10 minutes | < $1 |
-| [3_eval.ipynb](./3_eval.ipynb) | From 5 minutes for the sample to multiple days for bigger domains | From $1 for the sample to $50 or more for bigger domains |
+| [0_workspace.ipynb](./0_workspace.ipynb) | A few minutes | A few cents |
+| [1_gen.ipynb](./1_gen.ipynb) | From 5 minutes for the sample to multiple days for bigger domains | From $1 for the sample to $50 or more for bigger domains  |
+| [2_finetune.ipynb](./2_finetune.ipynb) | Roughly 1.5 hours | Roughly $50 |
+| [3_deploy.ipynb](./3_deploy.ipynb) | < 10 minutes | < $1 |
+| [4_eval.ipynb](./4_eval.ipynb) | From 5 minutes for the sample to multiple days for bigger domains | From $1 for the sample to $50 or more for bigger domains |
 
 ## Configuration files
 
@@ -47,7 +49,7 @@ This repository is organized in 4 notebooks, one for each step of the process:
 | ------------- | ---------------- |
 | [.env](./.env) | User provided environment variables read by notebooks and scripts |
 | [.env.state](./.env.state) | Environment variables for resources created during notebooks execution and shared by all notebooks |
-| [config.json](./config.json) | Configuration necessary to connect to the Azure AI Studio Hub and Azure ML Workspace |
+| [config.json](./config.json) | Configuration necessary to connect to the Azure AI Studio Hub (same as Azure ML Workspace) |
 
 ## Parameterized execution
 
