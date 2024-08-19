@@ -31,7 +31,8 @@ This repository is organized in 4 notebooks, one for each step of the process:
 
 | Notebook      | Explanation      |
 | ------------- | ---------------- |
-| [0_workspace.ipynb](./0_workspace.ipynb) (**Start here**) | Configure or provisions an Azure AI Studio Hub (same as an Azure ML Workspace) |
+| [0_a_workspace.ipynb](./0_a_workspace.ipynb) (**Start here**) | Configure or provisions an Azure AI Studio Hub (same as an Azure ML Workspace) |
+| [0_b_deploy_teacher.ipynb](./0_b_deploy_teacher.ipynb) | Deploys a Llama 3.1 405B teacher model |
 | [1_gen.ipynb](./1_gen.ipynb) | Generate a finetuning dataset using RAFT |
 | [2_finetune.ipynb](./2_finetune.ipynb) | Fine tune a base model using the generated dataset |
 | [3_deploy.ipynb](./3_deploy.ipynb) | Deploy the fine tuned model |
@@ -45,7 +46,8 @@ This repository is organized in 4 notebooks, one for each step of the process:
 
 | Notebook      | Run time      | Cost      |
 | ------------- | ---------------- | ---------------- |
-| [0_workspace.ipynb](./0_workspace.ipynb) | A few minutes | A few cents |
+| [0_a_workspace.ipynb](./0_a_workspace.ipynb) | A few minutes | A few cents |
+| [0_b_deploy_teacher.ipynb](./0_b_deploy_teacher.ipynb) | A few minutes | A few cents |
 | [1_gen.ipynb](./1_gen.ipynb) | From 5 minutes for the sample to multiple days for bigger domains | From $1 for the sample to $50 or more for bigger domains  |
 | [2_finetune.ipynb](./2_finetune.ipynb) | Roughly 1.5 hours | Roughly $50 |
 | [3_deploy.ipynb](./3_deploy.ipynb) | < 10 minutes | < $1 |
