@@ -27,7 +27,7 @@ This repository is a recipe that will walk you through using [Meta Llama 3.1 405
 
 ## Notebooks
 
-This repository is organized in 4 notebooks, one for each step of the process:
+This repository is organized in 6 notebooks, one for each step of the process:
 
 | Notebook      | Explanation      |
 | ------------- | ---------------- |
