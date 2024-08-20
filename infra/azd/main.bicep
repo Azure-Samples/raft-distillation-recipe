@@ -49,17 +49,8 @@ param searchConnectionName string = ''
 @description('The API version of the OpenAI resource')
 param openAiApiVersion string = '2023-07-01-preview'
 
-@description('The type of the OpenAI resource')
-param openAiType string = 'azure'
-
 @description('The name of the search service')
 param searchServiceName string = ''
-
-@description('The name of the bing search service')
-param bingSearchName string = ''
-
-@description('The name of the AI search index')
-param aiSearchIndexName string = 'contoso-products'
 
 @description('The name of the 35 turbo OpenAI deployment')
 param openAi_35_turbo_DeploymentName string = 'gpt-35-turbo'
@@ -92,8 +83,6 @@ resource resourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
   location: location
   tags: tags
 }
-
-var prefix = toLower('${environmentName}-${resourceToken}')
 
 // USER ROLES
 var principalType = empty(runningOnGh) && empty(runningOnAdo) ? 'User' : 'ServicePrincipal'
@@ -153,82 +142,6 @@ module machineLearningEndpoint './core/host/ml-online-endpoint.bicep' = {
   }
 }
 
-module bing 'core/bing/bing-search.bicep' = {
-  name: 'bing'
-  scope: resourceGroup
-  params: {
-    name: !empty(bingSearchName) ? bingSearchName : '${take(prefix, 64-12)}-bing-search'
-    location: 'global'
-  }
-}
-
-// Container apps host (including container registry)
-module containerApps 'core/host/container-apps.bicep' = {
-  name: 'container-apps'
-  scope: resourceGroup
-  params: {
-    name: 'app'
-    location: location
-    tags: tags
-    containerAppsEnvironmentName: '${take(replace(prefix, '--', '-'), 64-7)}-ca-env'
-    containerRegistryName: ai.outputs.containerRegistryName
-    logAnalyticsWorkspaceName: ai.outputs.logAnalyticsWorkspaceName
-  }
-}
-
-module apiContainerApp 'app/api.bicep' = {
-  name: 'api'
-  scope: resourceGroup
-  params: {
-    name: replace('${take(prefix, 18)}-api', '--', '-')
-    location: location
-    tags: tags
-    identityName: managedIdentity.outputs.managedIdentityName
-    identityId: managedIdentity.outputs.managedIdentityClientId
-    containerAppsEnvironmentName: containerApps.outputs.environmentName
-    containerRegistryName: containerApps.outputs.registryName
-    openAi_35_turbo_DeploymentName: !empty(openAi_35_turbo_DeploymentName) ? openAi_35_turbo_DeploymentName : 'gpt-35-turbo'
-    openAi_4_DeploymentName: !empty(openAi_4_DeploymentName) ? openAi_4_DeploymentName : 'gpt-4'
-    openAi_4_eval_DeploymentName: !empty(openAi_4_eval_DeploymentName) ? openAi_4_eval_DeploymentName : 'gpt-4-evals'
-    openAiEmbeddingDeploymentName: openAiEmbeddingDeploymentName
-    openAiEndpoint: ai.outputs.openAiEndpoint
-    openAiName: ai.outputs.openAiName
-    openAiType: openAiType
-    openAiApiVersion: openAiApiVersion
-    aiSearchEndpoint: ai.outputs.searchServiceEndpoint
-    aiSearchIndexName: aiSearchIndexName
-    appinsights_Connectionstring: ai.outputs.applicationInsightsConnectionString
-    bingApiEndpoint: bing.outputs.endpoint
-    bingApiKey: bing.outputs.bingApiKey
-  }
-}
-
-module webContainerApp 'app/web.bicep' = {
-  name: 'web'
-  scope: resourceGroup
-  params: {
-    name: replace('${take(prefix, 18)}-web', '--', '-')
-    location: location
-    tags: tags
-    identityName: managedIdentity.outputs.managedIdentityName
-    identityId: managedIdentity.outputs.managedIdentityClientId
-    containerAppsEnvironmentName: containerApps.outputs.environmentName
-    containerRegistryName: containerApps.outputs.registryName
-    apiEndpoint: apiContainerApp.outputs.SERVICE_ACA_URI
-  }
-}
-
-module aiSearchRole 'core/security/role.bicep' = {
-  scope: resourceGroup
-  name: 'ai-search-index-data-contributor'
-  params: {
-    principalId: managedIdentity.outputs.managedIdentityPrincipalId
-    roleDefinitionId: '8ebe5a00-799e-43f5-93ac-243d3dce84a7' //Search Index Data Contributor
-    principalType: 'ServicePrincipal'
-  }
-}
-
-
 module appinsightsAccountRole 'core/security/role.bicep' = {
   scope: resourceGroup
   name: 'appinsights-account-role'
@@ -236,46 +149,6 @@ module appinsightsAccountRole 'core/security/role.bicep' = {
     principalId: managedIdentity.outputs.managedIdentityPrincipalId
     roleDefinitionId: '3913510d-42f4-4e42-8a64-420c390055eb' // Monitoring Metrics Publisher
     principalType: 'ServicePrincipal'
-  }
-}
-
-module userAiSearchRole 'core/security/role.bicep' = if (!empty(principalId)) {
-  scope: resourceGroup
-  name: 'user-ai-search-index-data-contributor'
-  params: {
-    principalId: principalId
-    roleDefinitionId: '8ebe5a00-799e-43f5-93ac-243d3dce84a7' //Search Index Data Contributor
-    principalType: principalType
-  }
-}
-
-module searchRoleUser 'core/security/role.bicep' = {
-  scope: resourceGroup
-  name: 'search-role-user'
-  params: {
-    principalId: principalId
-    roleDefinitionId: '1407120a-92aa-4202-b7e9-c0e197c71c8f'
-    principalType: principalType
-  }
-}
-
-module searchContribRoleUser 'core/security/role.bicep' = {
-  scope: resourceGroup
-  name: 'search-contrib-role-user'
-  params: {
-    principalId: principalId
-    roleDefinitionId: '8ebe5a00-799e-43f5-93ac-243d3dce84a7'
-    principalType: principalType
-  }
-}
-
-module searchSvcContribRoleUser 'core/security/role.bicep' = {
-  scope: resourceGroup
-  name: 'search-svccontrib-role-user'
-  params: {
-    principalId: principalId
-    roleDefinitionId: '7ca78c08-252a-4471-8644-bb5ff32d4ba0'
-    principalType: principalType
   }
 }
 
@@ -301,27 +174,7 @@ output AZURE_OPENAI_NAME string = ai.outputs.openAiName
 output AZURE_OPENAI_RESOURCE_GROUP string = resourceGroup.name
 output AZURE_OPENAI_RESOURCE_GROUP_LOCATION string = resourceGroup.location
 
-output API_SERVICE_ACA_NAME string = apiContainerApp.outputs.SERVICE_ACA_NAME
-output API_SERVICE_ACA_URI string = apiContainerApp.outputs.SERVICE_ACA_URI
-output API_SERVICE_ACA_IMAGE_NAME string = apiContainerApp.outputs.SERVICE_ACA_IMAGE_NAME
-
-output WEB_SERVICE_ACA_NAME string = webContainerApp.outputs.SERVICE_ACA_NAME
-output WEB_SERVICE_ACA_URI string = webContainerApp.outputs.SERVICE_ACA_URI
-output WEB_SERVICE_ACA_IMAGE_NAME string = webContainerApp.outputs.SERVICE_ACA_IMAGE_NAME
-
-output AZURE_CONTAINER_ENVIRONMENT_NAME string = containerApps.outputs.environmentName
-output AZURE_CONTAINER_REGISTRY_ENDPOINT string = containerApps.outputs.registryLoginServer
-output AZURE_CONTAINER_REGISTRY_NAME string = containerApps.outputs.registryName
-
 output APPINSIGHTS_CONNECTIONSTRING string = ai.outputs.applicationInsightsConnectionString
 
 output OPENAI_TYPE string = 'azure'
 output AZURE_EMBEDDING_NAME string = openAiEmbeddingDeploymentName
-
-output AZURE_SEARCH_ENDPOINT string = ai.outputs.searchServiceEndpoint
-output AZURE_SEARCH_NAME string = ai.outputs.searchServiceName
-
-output BING_SEARCH_ENDPOINT string = bing.outputs.endpoint
-output BING_SEARCH_KEY string = bing.outputs.bingApiKey
-
-

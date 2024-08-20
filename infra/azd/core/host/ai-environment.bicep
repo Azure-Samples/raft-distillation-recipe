@@ -42,7 +42,6 @@ module hubDependencies '../ai/hub-dependencies.bicep' = {
     logAnalyticsName: logAnalyticsName
     openAiName: openAiName
     openAiModelDeployments: openAiModelDeployments
-    searchServiceName: searchServiceName
   }
 }
 
@@ -60,8 +59,6 @@ module hub '../ai/hub.bicep' = {
     openAiName: hubDependencies.outputs.openAiName
     openAiConnectionName: openAiConnectionName
     openAiContentSafetyConnectionName: openAiContentSafetyConnectionName
-    aiSearchName: hubDependencies.outputs.searchServiceName
-    aiSearchConnectionName: searchConnectionName
   }
 }
 
@@ -108,7 +105,3 @@ output storageAccountName string = hubDependencies.outputs.storageAccountName
 // Open AI
 output openAiName string = hubDependencies.outputs.openAiName
 output openAiEndpoint string = hubDependencies.outputs.openAiEndpoint
-
-// Search
-output searchServiceName string = hubDependencies.outputs.searchServiceName
-output searchServiceEndpoint string = hubDependencies.outputs.searchServiceEndpoint

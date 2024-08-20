@@ -14,10 +14,6 @@ param containerRegistryId string = ''
 param openAiName string
 @description('The OpenAI Cognitive Services account connection name to use for the AI Studio Hub Resource')
 param openAiConnectionName string
-@description('The Azure Cognitive Search service name to use for the AI Studio Hub Resource')
-param aiSearchName string = ''
-@description('The Azure Cognitive Search service connection name to use for the AI Studio Hub Resource')
-param aiSearchConnectionName string
 @description('The OpenAI Content Safety connection name to use for the AI Studio Hub Resource')
 param openAiContentSafetyConnectionName string
 
@@ -95,29 +91,11 @@ resource hub 'Microsoft.MachineLearningServices/workspaces@2024-01-01-preview' =
     }
   }
 
-  resource searchConnection 'connections' =
-    if (!empty(aiSearchName)) {
-      name: aiSearchConnectionName
-      properties: {
-        category: 'CognitiveSearch'
-        authType: 'ApiKey'
-        isSharedToAll: true
-        target: 'https://${search.name}.search.windows.net/'
-        credentials: {
-          key: !empty(aiSearchName) ? search.listAdminKeys().primaryKey : ''
-        }
-      }
-    }
 }
 
 resource openAi 'Microsoft.CognitiveServices/accounts@2023-05-01' existing = {
   name: openAiName
 }
-
-resource search 'Microsoft.Search/searchServices@2021-04-01-preview' existing =
-  if (!empty(aiSearchName)) {
-    name: aiSearchName
-  }
 
 output name string = hub.name
 output id string = hub.id

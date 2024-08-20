@@ -15,8 +15,6 @@ param logAnalyticsName string = ''
 param applicationInsightsName string = ''
 @description('Name of the container registry')
 param containerRegistryName string = ''
-@description('Name of the Azure Cognitive Search service')
-param searchServiceName string = ''
 
 module keyVault '../security/keyvault.bicep' = {
   name: 'keyvault'
@@ -135,15 +133,6 @@ module cognitiveServices '../ai/cognitiveservices.bicep' = {
   }
 }
 
-module searchService '../search/search-services.bicep' = {
-    name: 'search'
-    params: {
-      name: searchServiceName
-      location: location
-      semanticSearch: 'standard'
-      disableLocalAuth: true
-    }
-  }
 output keyVaultId string = keyVault.outputs.id
 output keyVaultName string = keyVault.outputs.name
 output keyVaultEndpoint string = keyVault.outputs.endpoint
@@ -164,7 +153,3 @@ output logAnalyticsWorkspaceName string = !empty(logAnalyticsName) ? logAnalytic
 output openAiId string = cognitiveServices.outputs.id
 output openAiName string = cognitiveServices.outputs.name
 output openAiEndpoint string = cognitiveServices.outputs.endpoints['OpenAI Language Model Instance API']
-
-output searchServiceId string = !empty(searchServiceName) ? searchService.outputs.id : ''
-output searchServiceName string = !empty(searchServiceName) ? searchService.outputs.name : ''
-output searchServiceEndpoint string = !empty(searchServiceName) ? searchService.outputs.endpoint : ''
