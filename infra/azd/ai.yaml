@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=ai.yaml.json
+
+deployments:
+  - name: text-embedding-ada-002
+    model:
+      format: OpenAI
+      name: text-embedding-ada-002
+      version: "2"
+    sku:
+      name: "Standard"
+      capacity: 20
