@@ -67,6 +67,17 @@ module project '../ai/project.bicep' = {
   }
 }
 
+module maasModel '../ai/maas-model.bicep' = {
+  name: 'maas-model'
+  params: {
+    projectName: projectName
+    modelId: 'azureml://registries/azureml-meta/models/Meta-Llama-3-8B-Instruct'
+  }
+  dependsOn: [
+    project
+  ]
+}
+
 // Outputs
 // Resource Group
 output resourceGroupName string = resourceGroup().name
