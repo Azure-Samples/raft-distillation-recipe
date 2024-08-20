@@ -16,18 +16,12 @@ param openAiName string
 param openAiConnectionName string
 @description('The Open AI model deployments.')
 param openAiModelDeployments array = []
-@description('The Open AI content safety connection name.')
-param openAiContentSafetyConnectionName string
 @description('The Log Analytics resource name.')
 param logAnalyticsName string = ''
 @description('The Application Insights resource name.')
 param applicationInsightsName string = ''
 @description('The Container Registry resource name.')
 param containerRegistryName string = ''
-@description('The Azure Search resource name.')
-param searchServiceName string = ''
-@description('The Azure Search connection name.')
-param searchConnectionName string = ''
 param tags object = {}
 
 module hubDependencies '../ai/hub-dependencies.bicep' = {
@@ -58,7 +52,6 @@ module hub '../ai/hub.bicep' = {
     applicationInsightsId: hubDependencies.outputs.applicationInsightsId
     openAiName: hubDependencies.outputs.openAiName
     openAiConnectionName: openAiConnectionName
-    openAiContentSafetyConnectionName: openAiContentSafetyConnectionName
   }
 }
 

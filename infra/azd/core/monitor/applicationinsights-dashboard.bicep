@@ -34,6 +34,7 @@ resource applicationInsightsDashboard 'Microsoft.Portal/dashboards@2020-09-01-pr
               ]
               #disable-next-line BCP036
               type: 'Extension/AppInsightsExtension/PartType/AspNetOverviewPinnedPart'
+              #disable-next-line BCP037
               asset: {
                 idInputName: 'id'
                 type: 'ApplicationInsights'

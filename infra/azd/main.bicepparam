@@ -10,7 +10,6 @@ param aiProjectName = readEnvironmentVariable('AZUREAI_PROJECT_NAME', '')
 param endpointName = readEnvironmentVariable('AZUREAI_ENDPOINT_NAME', '')
 
 param openAiName = readEnvironmentVariable('AZURE_OPENAI_NAME', '')
-param searchServiceName = readEnvironmentVariable('AZURE_SEARCH_SERVICE_NAME', '')
 
 param applicationInsightsName = readEnvironmentVariable('AZURE_APPLICATION_INSIGHTS_NAME', '')
 param keyVaultName = readEnvironmentVariable('AZURE_KEYVAULT_NAME', '')
@@ -19,4 +18,3 @@ param logAnalyticsWorkspaceName = readEnvironmentVariable('AZURE_LOG_ANALYTICS_W
 
 param useContainerRegistry = bool(readEnvironmentVariable('USE_CONTAINER_REGISTRY', 'true'))
 param useApplicationInsights = bool(readEnvironmentVariable('USE_APPLICATION_INSIGHTS', 'true'))
-param useSearch = bool(readEnvironmentVariable('USE_SEARCH_SERVICE', 'true'))

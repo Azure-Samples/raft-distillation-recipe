@@ -24,8 +24,6 @@ param applicationInsightsName string = ''
 param openAiName string = ''
 @description('The Open AI connection name. If ommited will use a default value')
 param openAiConnectionName string = ''
-@description('The Open AI content safety connection name. If ommited will use a default value')
-param openAiContentSafetyConnectionName string = ''
 param keyVaultName string = ''
 @description('The Azure Storage Account resource name. If ommited will be generated')
 param storageAccountName string = ''
@@ -35,7 +33,6 @@ var abbrs = loadJsonContent('./abbreviations.json')
 param logAnalyticsWorkspaceName string = ''
 param useApplicationInsights bool = true
 param useContainerRegistry bool = true
-param useSearch bool = true
 var aiConfig = loadYamlContent('./ai.yaml')
 @description('The name of the machine learning online endpoint. If ommited will be generated')
 param endpointName string = ''
@@ -43,14 +40,8 @@ param endpointName string = ''
 param endpointServiceName string = 'chat'
 param resourceGroupName string = ''
 
-@description('The Azure Search connection name. If ommited will use a default value')
-param searchConnectionName string = ''
-
 @description('The API version of the OpenAI resource')
 param openAiApiVersion string = '2023-07-01-preview'
-
-@description('The name of the search service')
-param searchServiceName string = ''
 
 @description('The name of the 35 turbo OpenAI deployment')
 param openAi_35_turbo_DeploymentName string = 'gpt-35-turbo'
@@ -110,7 +101,6 @@ module ai 'core/host/ai-environment.bicep' = {
       : '${abbrs.storageStorageAccounts}${resourceToken}'
     openAiName: !empty(openAiName) ? openAiName : 'aoai-${resourceToken}'
     openAiConnectionName: !empty(openAiConnectionName) ? openAiConnectionName : 'aoai-connection'
-    openAiContentSafetyConnectionName: !empty(openAiContentSafetyConnectionName) ? openAiContentSafetyConnectionName : 'aoai-content-safety-connection'
     openAiModelDeployments: array(contains(aiConfig, 'deployments') ? aiConfig.deployments : [])
     logAnalyticsName: !useApplicationInsights
       ? ''
@@ -123,8 +113,6 @@ module ai 'core/host/ai-environment.bicep' = {
     containerRegistryName: !useContainerRegistry
       ? ''
       : !empty(containerRegistryName) ? containerRegistryName : '${abbrs.containerRegistryRegistries}${resourceToken}'
-    searchServiceName: !useSearch ? '' : !empty(searchServiceName) ? searchServiceName : '${abbrs.searchSearchServices}${resourceToken}'
-    searchConnectionName: !useSearch ? '' : !empty(searchConnectionName) ? searchConnectionName : 'search-service-connection'
   }
 }
 
