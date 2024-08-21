@@ -2,25 +2,32 @@
 param projectName string = 'my-project'
 
 @description('The Azure AI Model catalog asset id')
-param modelId string = 'azureml://registries/azureml-meta/models/Meta-Llama-3-8B-Instruct'
+param modelId string = ''
+
+@description('The Azure AI Model name')
+param modelName string = ''
+
+@description('The Azure AI Model registry')
+param registry string = ''
 
 @description('The serverless endpoint name')
+@maxLength(32)
 param endpointName string = ''
 
 @description('The serverless deployment location')
 param location string = resourceGroup().location
 
-var modelName = substring(modelId, (lastIndexOf(modelId, '/') + 1))
+var modelId_ = !empty(modelId) ? modelId : 'azureml://registries/${registry}/models/${modelName}'
 var subscriptionName = '${modelName}-subscription'
-var endpointName_ = !empty(endpointName) ? endpointName : take(replace(replace(modelName, '_', '-'), '.', '-'), 64)
+var endpointName_ = !empty(endpointName) ? endpointName : take(replace(replace('${modelName}', '_', '-'), '.', '-'), 32)
 
 resource marketplace_subscription 'Microsoft.MachineLearningServices/workspaces/marketplaceSubscriptions@2024-04-01-preview' = if (!startsWith(
-  modelId,
+  modelId_,
   'azureml://registries/azureml/'
 )) {
-  name: '${projectName}/${subscriptionName}'
+  name: replace('${projectName}/${subscriptionName}', '.', '-')
   properties: {
-    modelId: modelId
+    modelId: modelId_
   }
 }
 
@@ -32,7 +39,7 @@ resource maas_endpoint 'Microsoft.MachineLearningServices/workspaces/serverlessE
   }
   properties: {
     modelSettings: {
-      modelId: modelId
+      modelId: modelId_
     }
   }
   dependsOn: [

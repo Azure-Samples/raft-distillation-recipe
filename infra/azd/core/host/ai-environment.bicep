@@ -72,10 +72,13 @@ module project '../ai/project.bicep' = {
 
 @batchSize(1)
 module serverlessDeployment '../ai/serverless-deployment.bicep' = [for deployment in serverlessDeployments: {
-  name: deployment.name
+  name: replace(deployment.name, '.', '-')
   params: {
     projectName: projectName
-    modelId: 'azureml://registries/azureml-meta/models/Meta-Llama-3-8B-Instruct'
+    modelId: deployment.model.?id
+    modelName: deployment.model.?name
+    registry: deployment.model.?registry
+    endpointName: deployment.name
   }
   dependsOn: [
     project

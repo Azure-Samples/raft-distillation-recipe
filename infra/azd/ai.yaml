@@ -10,7 +10,7 @@ deployments:
     sku:
       name: "Standard"
       capacity: 20
-  - name: Llama-3.1-405B-Instruct
+  - name: raft-teacher-llama-3-1-405B-chat
     platform: serverless
     model:
       registry: azureml-meta
