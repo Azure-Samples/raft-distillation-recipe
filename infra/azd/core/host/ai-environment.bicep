@@ -24,8 +24,8 @@ param applicationInsightsName string = ''
 param containerRegistryName string = ''
 param tags object = {}
 
-var openaiDeployments = filter(deployments, deployment => toLower(deployment.format) == 'openai')
-var serverlessDeployments = filter(deployments, deployment => toLower(deployment.format) == 'serverless')
+var openaiDeployments = filter(deployments, deployment => toLower(deployment.platform) == 'openai')
+var serverlessDeployments = filter(deployments, deployment => toLower(deployment.platform) == 'serverless')
 
 module hubDependencies '../ai/hub-dependencies.bicep' = {
   name: 'hubDependencies'

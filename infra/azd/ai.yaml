@@ -2,7 +2,7 @@
 
 deployments:
   - name: text-embedding-ada-002
-    format: OpenAI
+    platform: openai
     model:
       format: OpenAI
       name: text-embedding-ada-002
@@ -11,7 +11,7 @@ deployments:
       name: "Standard"
       capacity: 20
   - name: llama
-    format: serverless
+    platform: serverless
     model:
       registry: azureml-meta
       name: Meta-Llama-3-8B-Instruct
