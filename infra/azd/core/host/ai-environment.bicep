@@ -116,3 +116,8 @@ output storageAccountName string = hubDependencies.outputs.storageAccountName
 // Open AI
 output openAiName string = hubDependencies.outputs.openAiName
 output openAiEndpoint string = hubDependencies.outputs.openAiEndpoint
+
+output serverlessDeployments array = [for (deployment, i) in serverlessDeployments: {
+  name: deployment.name
+  endpointUri: serverlessDeployment[i].outputs.endpointUri
+}]

@@ -40,19 +40,11 @@ param resourceGroupName string = ''
 @description('The API version of the OpenAI resource')
 param openAiApiVersion string = '2023-07-01-preview'
 
-@description('The name of the 35 turbo OpenAI deployment')
-param openAi_35_turbo_DeploymentName string = 'gpt-35-turbo'
+@description('The name of the embedding model deployment')
+param embeddingDeploymentName string = 'text-embedding-ada-002'
 
-
-@description('The name of the 4 OpenAI deployment')
-param openAi_4_DeploymentName string = 'gpt-4'
-
-
-@description('The name of the 4 eval OpenAI deployment')
-param openAi_4_eval_DeploymentName string = 'gpt-4-evals'
-
-@description('The name of the OpenAI embedding deployment')
-param openAiEmbeddingDeploymentName string = 'text-embedding-ada-002'
+@description('The name of the teacher model deployment')
+param teacherDeploymentName string = 'raft-teacher-llama-3-1-405B-chat'
 
 @description('Id of the user or app to assign application roles')
 param principalId string = ''
@@ -133,12 +125,13 @@ module openaiRoleUser 'core/security/role.bicep' = if (!empty(principalId)) {
   }
 }
 
+var teacherDeployment = length(ai.outputs.serverlessDeployments) == 1 
+  ? ai.outputs.serverlessDeployments[0] 
+  : first(filter(ai.outputs.serverlessDeployments, deployment => deployment.name == teacherDeploymentName))
+
 output AZURE_LOCATION string = location
 output AZURE_RESOURCE_GROUP string = resourceGroup.name
 
-output AZURE_OPENAI_35_TURBO_DEPLOYMENT_NAME string = openAi_35_turbo_DeploymentName
-output AZURE_OPENAI_DEPLOYMENT_NAME string = openAi_4_DeploymentName
-output AZURE_OPENAI_4_EVAL_DEPLOYMENT_NAME string = openAi_4_eval_DeploymentName
 output AZURE_OPENAI_API_VERSION string = openAiApiVersion
 output AZURE_OPENAI_ENDPOINT string = ai.outputs.openAiEndpoint
 output AZURE_OPENAI_NAME string = ai.outputs.openAiName
@@ -148,4 +141,10 @@ output AZURE_OPENAI_RESOURCE_GROUP_LOCATION string = resourceGroup.location
 output APPINSIGHTS_CONNECTIONSTRING string = ai.outputs.applicationInsightsConnectionString
 
 output OPENAI_TYPE string = 'azure'
-output AZURE_EMBEDDING_NAME string = openAiEmbeddingDeploymentName
+
+output COMPLETION_OPENAI_BASE_URL string = teacherDeployment.endpointUri
+output COMPLETION_OPENAI_DEPLOYMENT string = teacherDeployment.name
+
+output EMBEDDING_AZURE_OPENAI_ENDPOINT string = ai.outputs.openAiEndpoint
+output EMBEDDING_AZURE_OPENAI_DEPLOYMENT string = embeddingDeploymentName
+output EMBEDDING_OPENAI_API_VERSION string = openAiApiVersion
