@@ -14,8 +14,8 @@ param storageAccountName string
 param openAiName string
 @description('The Open AI connection name.')
 param openAiConnectionName string
-@description('The Open AI model deployments.')
-param openAiModelDeployments array = []
+@description('The Open AI and serverless model deployments.')
+param deployments array = []
 @description('The Log Analytics resource name.')
 param logAnalyticsName string = ''
 @description('The Application Insights resource name.')
@@ -23,6 +23,9 @@ param applicationInsightsName string = ''
 @description('The Container Registry resource name.')
 param containerRegistryName string = ''
 param tags object = {}
+
+var openaiDeployments = filter(deployments, deployment => toLower(deployment.format) == 'openai')
+var serverlessDeployments = filter(deployments, deployment => toLower(deployment.format) == 'serverless')
 
 module hubDependencies '../ai/hub-dependencies.bicep' = {
   name: 'hubDependencies'
@@ -35,7 +38,7 @@ module hubDependencies '../ai/hub-dependencies.bicep' = {
     applicationInsightsName: applicationInsightsName
     logAnalyticsName: logAnalyticsName
     openAiName: openAiName
-    openAiModelDeployments: openAiModelDeployments
+    openAiModelDeployments: openaiDeployments
   }
 }
 
@@ -67,8 +70,9 @@ module project '../ai/project.bicep' = {
   }
 }
 
-module maasModel '../ai/maas-model.bicep' = {
-  name: 'maas-model'
+@batchSize(1)
+module serverlessDeployment '../ai/maas-model.bicep' = [for deployment in serverlessDeployments: {
+  name: deployment.name
   params: {
     projectName: projectName
     modelId: 'azureml://registries/azureml-meta/models/Meta-Llama-3-8B-Instruct'
@@ -76,7 +80,7 @@ module maasModel '../ai/maas-model.bicep' = {
   dependsOn: [
     project
   ]
-}
+}]
 
 // Outputs
 // Resource Group

@@ -4,6 +4,7 @@ param location string = resourceGroup().location
 param tags object = {}
 @description('The custom subdomain name used to access the API. Defaults to the value of the name parameter.')
 param customSubDomainName string = name
+@description('Array of OpenAI model deployments')
 param deployments array = []
 param kind string = 'OpenAI'
 
