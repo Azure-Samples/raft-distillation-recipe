@@ -71,7 +71,7 @@ module project '../ai/project.bicep' = {
 }
 
 @batchSize(1)
-module serverlessDeployment '../ai/maas-model.bicep' = [for deployment in serverlessDeployments: {
+module serverlessDeployment '../ai/serverless-deployment.bicep' = [for deployment in serverlessDeployments: {
   name: deployment.name
   params: {
     projectName: projectName
