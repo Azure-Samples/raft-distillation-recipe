@@ -10,8 +10,8 @@ deployments:
     sku:
       name: "Standard"
       capacity: 20
-  - name: llama
+  - name: Llama-3.1-405B-Instruct
     platform: serverless
     model:
       registry: azureml-meta
-      name: Meta-Llama-3-8B-Instruct
+      name: Meta-Llama-3.1-405B-Instruct
