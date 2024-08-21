@@ -35,9 +35,6 @@ param useApplicationInsights bool = true
 param useContainerRegistry bool = true
 var aiConfig = loadYamlContent('./ai.yaml')
 @description('The name of the machine learning online endpoint. If ommited will be generated')
-param endpointName string = ''
-@description('The name of the azd service to use for the machine learning endpoint')
-param endpointServiceName string = 'chat'
 param resourceGroupName string = ''
 
 @description('The API version of the OpenAI resource')
@@ -113,20 +110,6 @@ module ai 'core/host/ai-environment.bicep' = {
     containerRegistryName: !useContainerRegistry
       ? ''
       : !empty(containerRegistryName) ? containerRegistryName : '${abbrs.containerRegistryRegistries}${resourceToken}'
-  }
-}
-
-module machineLearningEndpoint './core/host/ml-online-endpoint.bicep' = {
-  name: 'endpoint'
-  scope: resourceGroup
-  params: {
-    name: !empty(endpointName) ? endpointName : 'mloe-${resourceToken}'
-    location: location
-    tags: tags
-    serviceName: endpointServiceName
-    aiHubName: ai.outputs.hubName
-    aiProjectName: ai.outputs.projectName
-    keyVaultName: ai.outputs.keyVaultName
   }
 }
 
