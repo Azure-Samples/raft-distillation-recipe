@@ -1,7 +1,7 @@
 using './main.bicep'
 
-param environmentName = readEnvironmentVariable('AZURE_ENV_NAME', 'MY_ENV')
-param location = readEnvironmentVariable('AZURE_LOCATION', 'eastus2')
+param environmentName = readEnvironmentVariable('AZURE_ENV_NAME', 'raft-distillation-recipe')
+param location = readEnvironmentVariable('AZURE_LOCATION', 'westus3')
 param principalId = readEnvironmentVariable('AZURE_PRINCIPAL_ID', '')
 param resourceGroupName = readEnvironmentVariable('AZURE_RESOURCE_GROUP', '')
 
@@ -15,5 +15,5 @@ param keyVaultName = readEnvironmentVariable('AZURE_KEYVAULT_NAME', '')
 param storageAccountName = readEnvironmentVariable('AZURE_STORAGE_ACCOUNT_NAME', '')
 param logAnalyticsWorkspaceName = readEnvironmentVariable('AZURE_LOG_ANALYTICS_WORKSPACE_NAME', '')
 
-param useContainerRegistry = bool(readEnvironmentVariable('USE_CONTAINER_REGISTRY', 'true'))
-param useApplicationInsights = bool(readEnvironmentVariable('USE_APPLICATION_INSIGHTS', 'true'))
+param useContainerRegistry = bool(readEnvironmentVariable('USE_CONTAINER_REGISTRY', 'false'))
+param useApplicationInsights = bool(readEnvironmentVariable('USE_APPLICATION_INSIGHTS', 'false'))
