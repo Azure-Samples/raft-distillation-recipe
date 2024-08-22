@@ -16,7 +16,7 @@ pipeline:
 hooks:
   postprovision:
     posix:
-      shell: bash
+      shell: sh
       run: ./infra/azd/hooks/postprovision.sh
       interactive: true
       continueOnError: false
