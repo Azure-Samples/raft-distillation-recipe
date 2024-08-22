@@ -46,6 +46,9 @@ param embeddingDeploymentName string = 'text-embedding-ada-002'
 @description('The name of the teacher model deployment')
 param teacherDeploymentName string = 'raft-teacher-llama-3-1-405B-chat'
 
+@description('The name of the baseline model deployment')
+param baselineDeploymentName string = 'raft-baseline-llama-2-7b-chat'
+
 @description('Id of the user or app to assign application roles')
 param principalId string = ''
 
@@ -129,6 +132,8 @@ var teacherDeployment = length(ai.outputs.serverlessDeployments) == 1
   ? ai.outputs.serverlessDeployments[0] 
   : first(filter(ai.outputs.serverlessDeployments, deployment => deployment.name == teacherDeploymentName))
 
+var baselineDeployment = first(filter(ai.outputs.serverlessDeployments, deployment => deployment.name == baselineDeploymentName))
+
 output AZURE_LOCATION string = location
 output AZURE_RESOURCE_GROUP string = resourceGroup.name
 
@@ -148,3 +153,6 @@ output COMPLETION_OPENAI_DEPLOYMENT string = teacherDeployment.name
 output EMBEDDING_AZURE_OPENAI_ENDPOINT string = ai.outputs.openAiEndpoint
 output EMBEDDING_AZURE_OPENAI_DEPLOYMENT string = embeddingDeploymentName
 output EMBEDDING_OPENAI_API_VERSION string = openAiApiVersion
+
+output BASELINE_OPENAI_BASE_URL string = baselineDeployment.endpointUri
+output BASELINE_OPENAI_DEPLOYMENT string = baselineDeployment.name
