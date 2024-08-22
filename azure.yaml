@@ -13,3 +13,10 @@ pipeline:
     - AZURE_OPENAI_35_TURBO_DEPLOYMENT_NAME
     - AZURE_SEARCH_ENDPOINT
     - AZURE_OPENAI_NAME
+hooks:
+  postprovision:
+    posix:
+      shell: bash
+      run: ./infra/azd/hooks/postprovision.sh
+      interactive: true
+      continueOnError: false
