@@ -14,7 +14,7 @@ dedup_env() {
 $(cat $from $into)
 EOM
     for key in ${!env_ary[@]}; do
-        echo "${key}=\"${env_ary[${key}]}\""
+        echo "${key}=${env_ary[${key}]}"
     done | sort > $into
 }
 
