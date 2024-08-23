@@ -120,4 +120,6 @@ output openAiEndpoint string = hubDependencies.outputs.openAiEndpoint
 output serverlessDeployments array = [for (deployment, i) in serverlessDeployments: {
   name: deployment.name
   endpointUri: serverlessDeployment[i].outputs.endpointUri
+  primaryKey: serverlessDeployment[i].outputs.primaryKey
+  secondaryKey: serverlessDeployment[i].outputs.secondaryKey
 }]

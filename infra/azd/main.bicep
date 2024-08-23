@@ -143,12 +143,17 @@ output APPINSIGHTS_CONNECTIONSTRING string = ai.outputs.applicationInsightsConne
 
 output OPENAI_TYPE string = 'azure'
 
-output COMPLETION_OPENAI_BASE_URL string = teacherDeployment.endpointUri
-output COMPLETION_OPENAI_DEPLOYMENT string = teacherDeployment.name
-
+// Azure OpenAI environment variables
 output EMBEDDING_AZURE_OPENAI_ENDPOINT string = ai.outputs.openAiEndpoint
 output EMBEDDING_AZURE_OPENAI_DEPLOYMENT string = embeddingDeploymentName
 output EMBEDDING_OPENAI_API_VERSION string = openAiApiVersion
 
+// OpenAI environment variables
+output COMPLETION_OPENAI_BASE_URL string = teacherDeployment.endpointUri
+output COMPLETION_OPENAI_DEPLOYMENT string = teacherDeployment.name
+output COMPLETION_OPENAI_API_KEY string = teacherDeployment.primaryKey
+
+// OpenAI environment variables
 output BASELINE_OPENAI_BASE_URL string = baselineDeployment.endpointUri
 output BASELINE_OPENAI_DEPLOYMENT string = baselineDeployment.name
+output BASELINE_OPENAI_API_KEY string = baselineDeployment.primaryKey

@@ -48,3 +48,5 @@ resource maas_endpoint 'Microsoft.MachineLearningServices/workspaces/serverlessE
 }
 
 output endpointUri string = maas_endpoint.properties.inferenceEndpoint.uri
+output primaryKey string = maas_endpoint.listKeys().primaryKey
+output secondaryKey string = maas_endpoint.listKeys().secondaryKey
