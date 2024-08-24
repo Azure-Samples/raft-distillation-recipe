@@ -14,3 +14,5 @@ cat > config.json <<EOF
     "workspace_name": "${AZURE_WORKSPACE_NAME}"
 }
 EOF
+
+bash ${DIR}/tests.sh
