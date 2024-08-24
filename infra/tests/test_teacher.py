@@ -9,10 +9,17 @@ def test_teacher():
     from openai import AzureOpenAI
 
     model = getenv("COMPLETION_OPENAI_DEPLOYMENT")
+    assert model is not None
+
+    base_url = getenv("COMPLETION_OPENAI_BASE_URL")
+    assert base_url is not None
+
+    key = getenv("COMPLETION_OPENAI_API_KEY")
+    assert key is not None
 
     client = OpenAI(
-        base_url = getenv("COMPLETION_OPENAI_BASE_URL"),
-        api_key = getenv("COMPLETION_OPENAI_API_KEY"),
+        base_url = base_url,
+        api_key = key,
         )
     response = client.chat.completions.create(
         model=model, 

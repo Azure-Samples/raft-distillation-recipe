@@ -13,14 +13,25 @@ def test_embeddings():
     # Authenticate using the default Azure credential chain
     azure_credential = DefaultAzureCredential()
 
-    model = getenv("EMBEDDING_DEPLOYMENT_NAME")
+    model = getenv("EMBEDDING_AZURE_OPENAI_DEPLOYMENT")
+    assert model is not None
+
+    endpoint = getenv("EMBEDDING_AZURE_OPENAI_ENDPOINT")
+    assert endpoint is not None
+
+    version = getenv("EMBEDDING_OPENAI_API_VERSION")
+    assert version is not None
 
     oai_client = AzureOpenAI(
-        api_version = getenv("EMBEDDING_OPENAI_API_VERSION"),
-        azure_endpoint = getenv("EMBEDDING_AZURE_OPENAI_ENDPOINT"),
+        api_version = version,
+        azure_endpoint = endpoint,
         azure_ad_token_provider = get_bearer_token_provider(
             azure_credential, "https://cognitiveservices.azure.com/.default")
         )
-    response = oai_client.embeddings.create(input = ["Hello"], model=model).data[0].embedding
+    response = oai_client.embeddings.create(input = ["Hello"], model=model)
     assert response is not None
-    assert len(response) >= 512
+    assert len(datas := response.data) > 0
+    assert datas[0] is not None
+    assert (embedding := datas[0].embedding) is not None
+    assert embedding is not None
+    assert len(embedding) >= 512
