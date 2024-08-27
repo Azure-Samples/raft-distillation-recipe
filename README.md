@@ -165,6 +165,8 @@ After you are done working with the project, you can take down the infrastructur
 
 **IMPORTANT**: Please be aware that this will **DELETE** everything related to this project including **generated datasets** and **fine-tuned models**.
 
+**IMPORTANT**: Save everything important to you before running this command.
+
 ```
 azd down --purge
 ```
