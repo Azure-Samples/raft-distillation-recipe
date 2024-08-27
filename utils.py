@@ -24,10 +24,17 @@ def update_state(key, value):
     if Path(state_filename).exists() and Path(state_filename).is_file():
         data = dotenv_values(state_filename)
     data[key] = value
+    print(f"Updating state file with {key}={redact_secret(key, value)}")
     with open(state_filename, "w") as f:
         for k, v in data.items():
             f.write(f"{k}={v}\n")
 
+def redact_secret(key, value):
+    """Redact a value from the logs if the key indicates that the value contains a keyword such as KEY or SECRET."""
+    if "KEY" in key or "SECRET" in key:
+        return value[:4] + "*" * (len(value) - 4)
+    return value
+    
 
 def wait_for_model(client, model_name):
     """Wait for the model to be available, typically waiting for a finetuning job to complete."""

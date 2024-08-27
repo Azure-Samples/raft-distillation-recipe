@@ -1,0 +1,12 @@
+name: raft-distillation-recipe
+infra:
+    provider: "bicep"
+    path: "infra/azd"
+
+hooks:
+  postprovision:
+    posix:
+      shell: sh
+      run: ./infra/azd/hooks/postprovision.sh
+      interactive: true
+      continueOnError: false
