@@ -16,6 +16,8 @@ This repository is a recipe that will walk you through using [Meta Llama 3.1 405
     </tr>
 </table>
 
+**Project Goal**: The primary objective of this project is to simplify and automate the process of distilling large language models. The workflows and notebooks are meant to be as hands-free as possible, ensuring that even complex tasks like generating synthetic datasets, fine-tuning models, and deploying them can be accomplished with minimal manual intervention. Whether you’re a beginner or an expert, our focus is on providing a seamless experience that allows you to focus on the results rather than the process.
+
 ## More about RAFT
 
 - [Microsoft/Meta Blog post](https://aka.ms/raft-blog): RAFT:  A new way to teach LLMs to be better at RAG
