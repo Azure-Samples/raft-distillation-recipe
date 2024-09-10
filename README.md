@@ -33,7 +33,7 @@ The infrastructure for this project is fully provisioned using the Azure Develop
 
 The easiest is to open the project in Codespaces (or in VS Code Dev Container locally). It comes with azd included.
 
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/Azure-Samples/llama-raft-recipe)
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/Azure-Samples/raft-distillation-recipe)
 
 Login using azd
 
