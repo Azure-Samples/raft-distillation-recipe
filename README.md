@@ -47,6 +47,8 @@ Provision the infrastructure
 azd up
 ```
 
+When asked about the region, enter `westus3`, it is currently the only region supported for Model As A Service Serverless deployment.
+
 The post provisioning [tests.sh](./infra/azd/hooks/tests.sh) script will run infra integration tests to make sure everything is deployed successfully.
 
 Another post provisioning script, [export_env.sh](./infra/azd/hooks/export_env.sh) will export the environment variables for the provisioned infrastructure to the generated [./.env.state](./.env.state) file.
