@@ -20,3 +20,12 @@ deployments:
     model:
       registry: azureml-meta
       name: Meta-Llama-3.1-8B-Instruct
+  - name: gpt-4
+    platform: openai
+    model:
+      format: OpenAI
+      name: gpt-4
+      version: "turbo-2024-04-09"
+    sku:
+      name: "Standard"
+      capacity: 8

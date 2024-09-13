@@ -44,6 +44,9 @@ param openAiApiVersion string = '2023-07-01-preview'
 @description('The name of the embedding model deployment')
 param embeddingDeploymentName string = 'text-embedding-ada-002'
 
+@description('The name of the scoring model deployment')
+param scoringDeploymentName string = 'gpt-4'
+
 @description('The name of the teacher model deployment')
 param teacherDeploymentName string = 'raft-teacher-llama-3-1-405B-chat'
 
@@ -144,7 +147,7 @@ output APPINSIGHTS_CONNECTIONSTRING string = ai.outputs.applicationInsightsConne
 
 output OPENAI_TYPE string = 'azure'
 
-// Azure OpenAI environment variables
+// Azure OpenAI environment variables for embeddings
 output EMBEDDING_AZURE_OPENAI_ENDPOINT string = ai.outputs.openAiEndpoint
 output EMBEDDING_AZURE_OPENAI_DEPLOYMENT string = embeddingDeploymentName
 output EMBEDDING_OPENAI_API_VERSION string = openAiApiVersion
@@ -158,3 +161,8 @@ output COMPLETION_OPENAI_API_KEY string = teacherDeployment.primaryKey
 output BASELINE_OPENAI_BASE_URL string = baselineDeployment.endpointUri
 output BASELINE_OPENAI_DEPLOYMENT string = baselineDeployment.name
 output BASELINE_OPENAI_API_KEY string = baselineDeployment.primaryKey
+
+// Azure OpenAI environment variables for scoring
+output SCORING_AZURE_OPENAI_ENDPOINT string = ai.outputs.openAiEndpoint
+output SCORING_AZURE_OPENAI_DEPLOYMENT string = scoringDeploymentName
+output SCORING_OPENAI_API_VERSION string = openAiApiVersion
