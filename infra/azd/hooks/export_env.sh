@@ -11,7 +11,7 @@ dedup_env() {
         value=$(echo "$value" | sed 's/^ *"//' | sed 's/" *$//')
         env_ary[$key]=$value
     done <<EOM
-$(cat $from $into | grep -v '^#' | grep -v "^\ *$")
+$(cat $into $from | grep -v '^#' | grep -v "^\ *$")
 EOM
     for key in ${!env_ary[@]}; do
         echo "${key}=${env_ary[${key}]}"
