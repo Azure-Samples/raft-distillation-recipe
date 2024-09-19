@@ -8,5 +8,10 @@
     "terminal.integrated.env.windows": {
       "PYTHONPATH": "${env:PYTHONPATH}:${workspaceFolder}/.gorilla/raft",
     },
-    "python.envFile": "${workspaceFolder}/.vscode/python.env"
+    "python.envFile": "${workspaceFolder}/.vscode/python.env",
+    "python.testing.pytestArgs": [
+      "infra"
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true
 }
