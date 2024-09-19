@@ -6,7 +6,11 @@
     <p align="center"><i>Generated using DALL-e 3 on Azure AI</i></p>
 </p>
 
-This repository is a recipe that will walk you through using [Meta Llama 3.1 405B](https://aka.ms/c/learn-deploy-llama) deployed on [Azure AI](https://aka.ms/c/learn-ai) to generate a synthetic dataset using [UC Berkeley's Gorilla](https://aka.ms/ucb-gorilla) project RAFT method (see [blog post](https://aka.ms/raft-blog)). The synthetically generated dataset will be used to finetune a selection of student models. Finally, we will deploy the fine-tuned model and evaluate its performance compared to a baseline model.
+This repository is a recipe that will walk you through doing LLM distillation on Azure AI Serverless.
+
+>  **Distillation** is a process where a large pre-trained model (often referred to as the "teacher" model) is used to train a smaller, more efficient model (known as the "student" model). The goal is to transfer the knowledge from the teacher to the student, enabling the student to achieve comparable performance while being more resource-efficient.
+
+This recipe uses [Meta Llama 3.1 405B](https://aka.ms/c/learn-deploy-llama) as a teacher model deployed on [Azure AI](https://aka.ms/c/learn-ai) to generate a synthetic dataset using [UC Berkeley's Gorilla](https://aka.ms/ucb-gorilla) project RAFT method (see [blog post](https://aka.ms/raft-blog)). The synthetically generated dataset will then be used to finetune a student model, Meta Llama 3.1 8B or another supported model. Finally, we will deploy the fine-tuned model and evaluate its performance compared to a baseline model.
 
 <table>
     <tr>
