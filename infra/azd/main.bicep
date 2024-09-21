@@ -42,16 +42,17 @@ param resourceGroupName string = ''
 param openAiApiVersion string = '2023-07-01-preview'
 
 @description('The name of the embedding model deployment')
-param embeddingDeploymentName string = 'text-embedding-ada-002'
+param embeddingDeploymentName string = 'openai-text-embedding-ada-002'
 
 @description('The name of the scoring model deployment')
-param scoringDeploymentName string = 'gpt-4'
+param scoringDeploymentName string = 'openai-gpt-4'
 
 @description('The name of the teacher model deployment')
-param teacherDeploymentName string = 'raft-teacher-llama-3-1-405B-chat'
+param teacherDeploymentName string = 'meta-llama-3-1-405B-chat'
 
 @description('The name of the baseline model deployment')
-param baselineDeploymentName string = 'raft-baseline-llama-2-7b-chat'
+param baselineDeploymentName string = 'meta-llama-2-7b-chat'
+
 
 @description('Id of the user or app to assign application roles')
 param principalId string = ''

@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=ai.yaml.json
 
 deployments:
-  - name: text-embedding-ada-002
+  - name: openai-text-embedding-ada-002
     platform: openai
     model:
       format: OpenAI
@@ -10,17 +10,17 @@ deployments:
     sku:
       name: "Standard"
       capacity: 100
-  - name: raft-teacher-llama-3-1-405B-chat
+  - name: meta-llama-3-1-405B-chat
     platform: serverless
     model:
       registry: azureml-meta
       name: Meta-Llama-3.1-405B-Instruct
-  - name: raft-baseline-llama-2-7b-chat
+  - name: meta-llama-2-7b-chat
     platform: serverless
     model:
       registry: azureml-meta
       name: Meta-Llama-3.1-8B-Instruct
-  - name: gpt-4
+  - name: openai-gpt-4
     platform: openai
     model:
       format: OpenAI
