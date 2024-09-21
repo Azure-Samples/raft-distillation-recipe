@@ -53,6 +53,14 @@ param teacherDeploymentName string = 'meta-llama-3-1-405B-chat'
 @description('The name of the baseline model deployment')
 param baselineDeploymentName string = 'meta-llama-2-7b-chat'
 
+// List of models we know how to deploy
+var allDeployments = array(contains(aiConfig, 'deployments') ? aiConfig.deployments : [])
+
+// List of model names selected for deployment
+var selectedDeploymentNames = [embeddingDeploymentName, scoringDeploymentName, teacherDeploymentName, baselineDeploymentName]
+
+// List of models selected for deployment
+var selectedDeployments = filter(allDeployments, deployment => contains(selectedDeploymentNames, toLower(deployment.name)))
 
 @description('Id of the user or app to assign application roles')
 param principalId string = ''
@@ -98,7 +106,7 @@ module ai 'core/host/ai-environment.bicep' = {
       : '${abbrs.storageStorageAccounts}${resourceToken}'
     openAiName: !empty(openAiName) ? openAiName : 'aoai-${resourceToken}'
     openAiConnectionName: !empty(openAiConnectionName) ? openAiConnectionName : 'aoai-connection'
-    deployments: array(contains(aiConfig, 'deployments') ? aiConfig.deployments : [])
+    deployments: selectedDeployments
     logAnalyticsName: !useApplicationInsights
       ? ''
       : !empty(logAnalyticsWorkspaceName)
