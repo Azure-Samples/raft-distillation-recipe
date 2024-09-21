@@ -29,3 +29,12 @@ deployments:
     sku:
       name: "Standard"
       capacity: 8
+  - name: openai-gpt-4o
+    platform: openai
+    model:
+      format: OpenAI
+      name: gpt-4o
+      version: "2024-05-13"
+    sku:
+      name: "GlobalStandard"
+      capacity: 8
