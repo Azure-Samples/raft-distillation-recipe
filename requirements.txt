@@ -39,3 +39,7 @@ azure-mgmt-resource
 # Infra tests
 pytest==8.1.2
 requests==2.32.3
+
+click==8.1.7
+rich==13.8.1
+rich-click==1.8.3

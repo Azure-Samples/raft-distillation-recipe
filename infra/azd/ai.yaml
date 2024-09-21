@@ -3,6 +3,8 @@
 deployments:
   - name: openai-text-embedding-ada-002
     platform: openai
+    roles:
+      - embedding
     model:
       format: OpenAI
       name: text-embedding-ada-002
@@ -12,16 +14,23 @@ deployments:
       capacity: 100
   - name: meta-llama-3-1-405B-chat
     platform: serverless
+    roles:
+      - teacher
     model:
       registry: azureml-meta
       name: Meta-Llama-3.1-405B-Instruct
   - name: meta-llama-2-7b-chat
     platform: serverless
+    roles:
+      - student
+      - baseline
     model:
       registry: azureml-meta
       name: Meta-Llama-3.1-8B-Instruct
   - name: openai-gpt-4
     platform: openai
+    roles:
+      - teacher
     model:
       format: OpenAI
       name: gpt-4
@@ -31,9 +40,23 @@ deployments:
       capacity: 8
   - name: openai-gpt-4o
     platform: openai
+    roles:
+      - teacher
     model:
       format: OpenAI
       name: gpt-4o
+      version: "2024-05-13"
+    sku:
+      name: "GlobalStandard"
+      capacity: 8
+  - name: openai-gpt-4o-mini
+    platform: openai
+    roles:
+      - student
+      - baseline
+    model:
+      format: OpenAI
+      name: gpt-4o-mini
       version: "2024-05-13"
     sku:
       name: "GlobalStandard"
