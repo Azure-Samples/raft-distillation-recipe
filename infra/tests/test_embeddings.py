@@ -1,6 +1,6 @@
 from dotenv import load_dotenv
 from os import getenv
-from azure.identity import DefaultAzureCredential, ManagedIdentityCredential
+from azure.identity import DefaultAzureCredential
 from azure.identity import get_bearer_token_provider
 from openai import AzureOpenAI
 
@@ -8,7 +8,6 @@ load_dotenv(".env")
 load_dotenv(".env.state")
 
 def test_embeddings():
-    from openai import AzureOpenAI
 
     # Authenticate using the default Azure credential chain
     azure_credential = DefaultAzureCredential()
