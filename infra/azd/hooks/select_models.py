@@ -3,6 +3,22 @@ import os
 from rich.prompt import Prompt
 import yaml
 from pathlib import Path
+from dotenv import load_dotenv
+import subprocess
+
+def azd_env_get_values():
+    result = subprocess.run(['azd', 'env', 'get-values'], capture_output=True, text=True)
+    return result.stdout
+
+def load_azd_env():
+    from io import StringIO
+    env_values = azd_env_get_values()
+    config = StringIO(env_values)
+    load_dotenv(stream=config)
+
+load_dotenv(".env")
+load_dotenv(".env.state")
+load_azd_env()
 
 def read_ai_config():
     dir=cwd = os.path.dirname(os.path.realpath(__file__))
@@ -32,6 +48,10 @@ def select_model(role, names):
     deployment=names[index]
     return deployment
 
+#def select_model(role, names):
+#    deployment=input(f"Pick a {role} deployment name: ")
+#    return deployment
+
 def decorators(decorators):
     def decorator(f):
         for d in reversed(decorators):
@@ -48,6 +68,9 @@ def role_option(ai_config, role):
 
 def role_env_var_name(role):
     return f'{role.upper()}_DEPLOYMENT_NAME'
+
+def azd_set_env(name, value):
+    subprocess.run(['azd', 'env', 'set', name, value], shell=False, capture_output=True, text=True)
 
 if __name__ == '__main__':
 
@@ -69,8 +92,8 @@ if __name__ == '__main__':
                 else:
                     arg_value = select_model(role, names)
 
-                if set_azd_env:
-                    click.echo(f'{env_var_name}={arg_value}')
-                    os.environ[env_var_name] = arg_value
+            if set_azd_env:
+                click.echo(f'{env_var_name}={arg_value}')
+                azd_set_env(env_var_name, arg_value)
 
     select_models()
