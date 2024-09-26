@@ -41,13 +41,34 @@ The easiest is to open the project in Codespaces (or in VS Code Dev Container lo
 
 [![Open in Dev Containers](https://img.shields.io/static/v1?style=for-the-badge&label=Dev%20Containers&message=Open&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/Azure-Samples/raft-distillation-recipe)
 
-Login using azd
+### Login using azd
 
 ```
 azd auth login --use-device-code
 ```
 
-Provision the infrastructure
+### Select models
+
+Select which models you want to use for `teacher`, `student`, `embedding` and `baseline` (`baseline` usually equals `student`):
+
+If in Codespaces or Dev Container:
+
+```
+select_models.py
+```
+
+<details>
+<summary>It not, virtual env instructions:</summary>
+
+```
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+./infra/scripts/select_models.py
+```
+</details>
+
+### Provision the infrastructure
 
 ```
 azd up
