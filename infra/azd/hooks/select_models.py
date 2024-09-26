@@ -29,7 +29,8 @@ def read_ai_config():
 
 def get_roles(aiConfig):
     deployments=aiConfig['deployments'] if 'deployments' in aiConfig else []
-    roles = set([role for d in deployments for role in d['roles']])
+    roles = list(set([role for d in deployments for role in d['roles']]))
+    roles.sort()
     return roles
 
 def get_deployment_names(ai_config, role='teacher'):
@@ -42,9 +43,10 @@ def get_deployment_names(ai_config, role='teacher'):
 def first(array):
     return next(iter(array), None)
 
-def select_model(role, names):
+def select_model(role, names, default = None):
     import survey
-    index = survey.routines.select(f"Pick a {role} deployment name: ", options = names)
+    default_index = names.index(default) if default else 0
+    index = survey.routines.select(f"Pick a {role} deployment name: ", options = names, index = default_index)
     deployment=names[index]
     return deployment
 
@@ -85,12 +87,11 @@ if __name__ == '__main__':
         for arg_name, arg_value in kwargs.items():
             role = arg_name.replace('_deployment', '')
             env_var_name = role_env_var_name(role)
-            if not arg_value:
-                names = get_deployment_names(ai_config, role)
-                if len(names) == 1:
-                    arg_value = names[0]
-                else:
-                    arg_value = select_model(role, names)
+            names = get_deployment_names(ai_config, role)
+            if len(names) == 1:
+                arg_value = names[0]
+            else:
+                arg_value = select_model(role, names, default = arg_value)
 
             if set_azd_env:
                 click.echo(f'{env_var_name}={arg_value}')
