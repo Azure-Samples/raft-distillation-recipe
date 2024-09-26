@@ -3,14 +3,21 @@ import os
 from rich.prompt import Prompt
 import yaml
 from pathlib import Path
+from functools import cache
 
-def get_deployment_names(role='teacher'):
+@cache
+def read_ai_config():
     dir=cwd = os.path.dirname(os.path.realpath(__file__))
     path=Path(dir, "../ai.yaml")
     with open(path, 'r') as aiConfigFile:
         aiConfig = yaml.safe_load(aiConfigFile)
-        deployments=aiConfig['deployments'] if 'deployments' in aiConfig else []
+    return aiConfig
 
+@cache
+def get_deployment_names(role='teacher'):
+    aiConfig = read_ai_config()
+    deployments=aiConfig['deployments'] if 'deployments' in aiConfig else []
+    
     teacherDeployments = filter(lambda d: role in d['roles'], deployments)
     deploymentNames = map(lambda d: d['name'], teacherDeployments)
     return list(deploymentNames)
@@ -24,23 +31,31 @@ def select_model(role, names):
     deployment=teacher_deployment_names[index]
     return deployment
 
+def yad(decorators):
+    def decorator(f):
+        for d in reversed(decorators):
+            f = d(f)
+        return f
+    return decorator
+
 if __name__ == '__main__':
 
     teacher_deployment_names = get_deployment_names(role='teacher')
     baseline_deployment_names = get_deployment_names(role='baseline')
 
+    deployment_names = []
+
+    roles = ['teacher', 'baseline']
+    options = [
+        click.option(f'--{role}-deployment',
+            type=click.Choice(get_deployment_names(role=role)),
+            default=os.getenv(f'{role.upper()}_DEPLOYMENT_NAME'),
+            help=f'The name of the {role} deployment to select.'
+            ) for role in roles]
+
     @click.command()
-    @click.option('--teacher-deployment',
-        type=click.Choice(teacher_deployment_names),
-        default=os.getenv('TEACHER_DEPLOYMENT_NAME'),
-        help='The name of the teacher deployment to select.'
-        )
-    @click.option('--baseline-deployment',
-        type=click.Choice(baseline_deployment_names),
-        default=os.getenv('BASELINE_DEPLOYMENT_NAME', first(baseline_deployment_names)),
-        help='The name of the baseline deployment to select.'
-        )
-    def select_models(teacher_deployment, baseline_deployment):
+    @yad(options)
+    def select_models(baseline_deployment, teacher_deployment):
         if not teacher_deployment:
             teacher_deployment = select_model('teacher', teacher_deployment_names)
         if not baseline_deployment:
