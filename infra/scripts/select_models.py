@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import click as click
 import os
 from rich.prompt import Prompt
@@ -22,7 +24,7 @@ load_azd_env()
 
 def read_ai_config():
     dir=cwd = os.path.dirname(os.path.realpath(__file__))
-    path=Path(dir, "../ai.yaml")
+    path=Path(dir, "../azd/ai.yaml")
     with open(path, 'r') as aiConfigFile:
         aiConfig = yaml.safe_load(aiConfigFile)
     return aiConfig
@@ -49,10 +51,6 @@ def select_model(role, names, default = None):
     index = survey.routines.select(f"Pick a {role} deployment name: ", options = names, index = default_index)
     deployment=names[index]
     return deployment
-
-#def select_model(role, names):
-#    deployment=input(f"Pick a {role} deployment name: ")
-#    return deployment
 
 def decorators(decorators):
     def decorator(f):
@@ -82,7 +80,7 @@ if __name__ == '__main__':
 
     @click.command()
     @decorators(role_options)
-    @click.option('--set-azd-env/--no-set-azd-env', default=False, help='Set the selected deployment names as environment variables.')
+    @click.option('--set-azd-env/--no-set-azd-env', default=True, help='Set the selected deployment names as environment variables.')
     def select_models(set_azd_env, **kwargs):
         for arg_name, arg_value in kwargs.items():
             role = arg_name.replace('_deployment', '')
