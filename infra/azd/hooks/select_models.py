@@ -32,7 +32,7 @@ def select_model(role, names):
     deployment=names[index]
     return deployment
 
-def yad(decorators):
+def decorators(decorators):
     def decorator(f):
         for d in reversed(decorators):
             f = d(f)
@@ -46,11 +46,6 @@ def role_option(ai_config, role):
         help=f'The name of the {role} deployment to select.'
         )
 
-def role_options(ai_config):
-    roles = get_roles(ai_config)
-    options = [role_option(ai_config, role) for role in roles]
-    return yad(options)
-
 def role_env_var_name(role):
     return f'{role.upper()}_DEPLOYMENT_NAME'
 
@@ -58,17 +53,15 @@ if __name__ == '__main__':
 
     ai_config = read_ai_config()
     roles = get_roles(ai_config)
-
-    options = [role_option(ai_config, role) for role in roles]
+    role_options = [role_option(ai_config, role) for role in roles]
 
     @click.command()
-#    @yad(options)
-    @role_options(ai_config)
+    @decorators(role_options)
     def select_models(**kwargs):
         for arg_name, arg_value in kwargs.items():
             if not arg_value:
                 role = arg_name.replace('_deployment', '')
-                names = get_deployment_names(ai_config=ai_config, role=role)
+                names = get_deployment_names(ai_config, role)
                 if len(names) == 1:
                     arg_value = names[0]
                 else:
