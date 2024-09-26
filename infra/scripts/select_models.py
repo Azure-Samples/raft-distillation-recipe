@@ -74,6 +74,7 @@ def azd_set_env(name, value):
 
 if __name__ == '__main__':
 
+    # Read ai.yaml, collect roles and build a CLI option for each deployment model role
     ai_config = read_ai_config()
     roles = get_roles(ai_config)
     role_options = [role_option(ai_config, role) for role in roles]
@@ -82,14 +83,20 @@ if __name__ == '__main__':
     @decorators(role_options)
     @click.option('--set-azd-env/--no-set-azd-env', default=True, help='Set the selected deployment names as environment variables.')
     def select_models(set_azd_env, **kwargs):
+        values = []
         for arg_name, arg_value in kwargs.items():
             role = arg_name.replace('_deployment', '')
             env_var_name = role_env_var_name(role)
             names = get_deployment_names(ai_config, role)
             arg_value = select_model(role, names, default = arg_value)
 
-            if set_azd_env:
-                click.echo(f'{env_var_name}={arg_value}')
-                azd_set_env(env_var_name, arg_value)
+            values.append((env_var_name, arg_value))
+
+        if set_azd_env:
+            click.echo()
+            click.echo('Saving model selection to azd environment:')
+            for name, value in values:
+                click.echo(f' - {name}={value}')
+                azd_set_env(name, value)
 
     select_models()
