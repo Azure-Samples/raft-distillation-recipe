@@ -88,10 +88,7 @@ if __name__ == '__main__':
             role = arg_name.replace('_deployment', '')
             env_var_name = role_env_var_name(role)
             names = get_deployment_names(ai_config, role)
-            if len(names) == 1:
-                arg_value = names[0]
-            else:
-                arg_value = select_model(role, names, default = arg_value)
+            arg_value = select_model(role, names, default = arg_value)
 
             if set_azd_env:
                 click.echo(f'{env_var_name}={arg_value}')
