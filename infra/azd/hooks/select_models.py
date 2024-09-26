@@ -57,15 +57,20 @@ if __name__ == '__main__':
 
     @click.command()
     @decorators(role_options)
-    def select_models(**kwargs):
+    @click.option('--set-azd-env/--no-set-azd-env', default=False, help='Set the selected deployment names as environment variables.')
+    def select_models(set_azd_env, **kwargs):
         for arg_name, arg_value in kwargs.items():
+            role = arg_name.replace('_deployment', '')
+            env_var_name = role_env_var_name(role)
             if not arg_value:
-                role = arg_name.replace('_deployment', '')
                 names = get_deployment_names(ai_config, role)
                 if len(names) == 1:
                     arg_value = names[0]
                 else:
                     arg_value = select_model(role, names)
-            click.echo(f'{role_env_var_name(role)}={arg_value}')
+
+                if set_azd_env:
+                    click.echo(f'{env_var_name}={arg_value}')
+                    os.environ[env_var_name] = arg_value
 
     select_models()
