@@ -60,7 +60,7 @@ var allDeployments = array(contains(aiConfig, 'deployments') ? aiConfig.deployme
 var selectedDeploymentNames = [embeddingDeploymentName, scoringDeploymentName, teacherDeploymentName, baselineDeploymentName]
 
 // Mapping from deployment name to role
-var roles = toObject([
+var roles = mapValues(toObject([
   {
     name: embeddingDeploymentName
     role: 'embedding'
@@ -77,14 +77,14 @@ var roles = toObject([
     name: baselineDeploymentName
     role: 'baseline'
   }
-], e => e.name)
+], e => e.name), v => v.role)
 
 // List of models selected for deployment
 var filteredDeployments = filter(allDeployments, deployment => contains(selectedDeploymentNames, toLower(deployment.name)))
 
 // Assign role to each deployment
 var selectedDeployments = [for deployment in filteredDeployments: union(deployment, {
-  role: roles[deployment.name].role
+  role: roles[deployment.name]
 })]
 
 @description('Id of the user or app to assign application roles')
