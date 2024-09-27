@@ -123,3 +123,14 @@ output serverlessDeployments array = [for (deployment, i) in serverlessDeploymen
   primaryKey: serverlessDeployment[i].outputs.primaryKey
   secondaryKey: serverlessDeployment[i].outputs.secondaryKey
 }]
+
+output openaiDeployments array = [for (deployment, i) in openaiDeployments: {
+  name: deployment.name
+  endpointUri: hubDependencies.outputs.openAiEndpoint
+}]
+
+output deployments array = [for (deployment, i) in deployments: union(deployment, {
+  endpointUri: deployment.platform == 'serverless' ? serverlessDeployment[i].outputs.endpointUri : hubDependencies.outputs.openAiEndpoint
+  primaryKey: deployment.platform == 'serverless' ? serverlessDeployment[i].outputs.primaryKey : ''
+  secondaryKey: deployment.platform == 'serverless' ? serverlessDeployment[i].outputs.secondaryKey : ''
+})]

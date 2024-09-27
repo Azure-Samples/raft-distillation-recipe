@@ -59,8 +59,33 @@ var allDeployments = array(contains(aiConfig, 'deployments') ? aiConfig.deployme
 // List of model names selected for deployment
 var selectedDeploymentNames = [embeddingDeploymentName, scoringDeploymentName, teacherDeploymentName, baselineDeploymentName]
 
+// Mapping from deployment name to role
+var roles = toObject([
+  {
+    name: embeddingDeploymentName
+    role: 'embedding'
+  }
+  {
+    name: scoringDeploymentName
+    role: 'scoring'
+  }
+  {
+    name: teacherDeploymentName
+    role: 'teacher'
+  }
+  {
+    name: baselineDeploymentName
+    role: 'baseline'
+  }
+], e => e.name)
+
 // List of models selected for deployment
-var selectedDeployments = filter(allDeployments, deployment => contains(selectedDeploymentNames, toLower(deployment.name)))
+var filteredDeployments = filter(allDeployments, deployment => contains(selectedDeploymentNames, toLower(deployment.name)))
+
+// Assign role to each deployment
+var selectedDeployments = [for deployment in filteredDeployments: union(deployment, {
+  role: roles[deployment.name].role
+})]
 
 @description('Id of the user or app to assign application roles')
 param principalId string = ''
@@ -141,11 +166,10 @@ module openaiRoleUser 'core/security/role.bicep' = if (!empty(principalId)) {
   }
 }
 
-var teacherDeployment = length(ai.outputs.serverlessDeployments) == 1 
-  ? ai.outputs.serverlessDeployments[0] 
-  : first(filter(ai.outputs.serverlessDeployments, deployment => deployment.name == teacherDeploymentName))
-
-var baselineDeployment = first(filter(ai.outputs.serverlessDeployments, deployment => deployment.name == baselineDeploymentName))
+var teacherDeployment = first(filter(ai.outputs.deployments, deployment => deployment.name == teacherDeploymentName))
+var baselineDeployment = first(filter(ai.outputs.deployments, deployment => deployment.name == baselineDeploymentName))
+var embeddingDeployment = first(filter(ai.outputs.deployments, deployment => deployment.name == embeddingDeploymentName))
+var scoringDeployment = first(filter(ai.outputs.deployments, deployment => deployment.name == scoringDeploymentName))
 
 output AZURE_LOCATION string = location
 output AZURE_RESOURCE_GROUP string = resourceGroup.name
@@ -165,13 +189,21 @@ output EMBEDDING_OPENAI_API_VERSION string = openAiApiVersion
 output COMPLETION_OPENAI_BASE_URL string = teacherDeployment.endpointUri
 output COMPLETION_OPENAI_DEPLOYMENT string = teacherDeployment.name
 output COMPLETION_OPENAI_API_KEY string = teacherDeployment.primaryKey
+output COMPLETION_DEPLOYMENT_PLATFORM string = teacherDeployment.platform
 
-// OpenAI environment variables
-output BASELINE_OPENAI_BASE_URL string = baselineDeployment.endpointUri
-output BASELINE_OPENAI_DEPLOYMENT string = baselineDeployment.name
+// baseline
+output BASELINE_AZURE_OPENAI_ENDPOINT string = baselineDeployment.platform == 'openai' ? baselineDeployment.endpointUri : ''
+output BASELINE_AZURE_OPENAI_DEPLOYMENT string = baselineDeployment.platform == 'openai' ? baselineDeployment.name : ''
+
+output BASELINE_OPENAI_BASE_URL string = baselineDeployment.platform == 'serverless' ? baselineDeployment.endpointUri : ''
+output BASELINE_OPENAI_DEPLOYMENT string = baselineDeployment.platform == 'serverless' ? baselineDeployment.name : ''
+
 output BASELINE_OPENAI_API_KEY string = baselineDeployment.primaryKey
+output BASELINE_DEPLOYMENT_PLATFORM string = teacherDeployment.platform
 
 // Azure OpenAI environment variables for scoring
 output SCORING_AZURE_OPENAI_ENDPOINT string = ai.outputs.openAiEndpoint
 output SCORING_AZURE_OPENAI_DEPLOYMENT string = scoringDeploymentName
 output SCORING_OPENAI_API_VERSION string = openAiApiVersion
+
+output DEPLOYMENTS array = ai.outputs.deployments
