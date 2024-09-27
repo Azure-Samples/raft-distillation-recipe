@@ -29,5 +29,8 @@ def export(deployments_file):
             if deployment['primaryKey']:
                 export_var(f"{var_prefix}_OPENAI_API_KEY", deployment['primaryKey'])
 
+            if deployment['apiVersion']:
+                export_var(f"{var_prefix}_OPENAI_API_VERSION", deployment['apiVersion'])
+
 if __name__ == '__main__':
     export()

@@ -143,6 +143,7 @@ module ai 'core/host/ai-environment.bicep' = {
     containerRegistryName: !useContainerRegistry
       ? ''
       : !empty(containerRegistryName) ? containerRegistryName : '${abbrs.containerRegistryRegistries}${resourceToken}'
+    openaiApiVersion: openAiApiVersion
   }
 }
 
@@ -166,11 +167,6 @@ module openaiRoleUser 'core/security/role.bicep' = if (!empty(principalId)) {
   }
 }
 
-var teacherDeployment = first(filter(ai.outputs.deployments, deployment => deployment.name == teacherDeploymentName))
-var baselineDeployment = first(filter(ai.outputs.deployments, deployment => deployment.name == baselineDeploymentName))
-var embeddingDeployment = first(filter(ai.outputs.deployments, deployment => deployment.name == embeddingDeploymentName))
-var scoringDeployment = first(filter(ai.outputs.deployments, deployment => deployment.name == scoringDeploymentName))
-
 output AZURE_LOCATION string = location
 output AZURE_RESOURCE_GROUP string = resourceGroup.name
 
@@ -178,32 +174,8 @@ output AZURE_WORKSPACE_NAME string = ai.outputs.projectName
 
 output APPINSIGHTS_CONNECTIONSTRING string = ai.outputs.applicationInsightsConnectionString
 
-output OPENAI_TYPE string = 'azure'
-
-// Azure OpenAI environment variables for embeddings
-output EMBEDDING_AZURE_OPENAI_ENDPOINT string = ai.outputs.openAiEndpoint
-output EMBEDDING_AZURE_OPENAI_DEPLOYMENT string = embeddingDeploymentName
-output EMBEDDING_OPENAI_API_VERSION string = openAiApiVersion
-
-// OpenAI environment variables
-output COMPLETION_OPENAI_BASE_URL string = teacherDeployment.endpointUri
-output COMPLETION_OPENAI_DEPLOYMENT string = teacherDeployment.name
-output COMPLETION_OPENAI_API_KEY string = teacherDeployment.primaryKey
-output COMPLETION_DEPLOYMENT_PLATFORM string = teacherDeployment.platform
-
-// baseline
-output BASELINE_AZURE_OPENAI_ENDPOINT string = baselineDeployment.platform == 'openai' ? baselineDeployment.endpointUri : ''
-output BASELINE_AZURE_OPENAI_DEPLOYMENT string = baselineDeployment.platform == 'openai' ? baselineDeployment.name : ''
-
-output BASELINE_OPENAI_BASE_URL string = baselineDeployment.platform == 'serverless' ? baselineDeployment.endpointUri : ''
-output BASELINE_OPENAI_DEPLOYMENT string = baselineDeployment.platform == 'serverless' ? baselineDeployment.name : ''
-
-output BASELINE_OPENAI_API_KEY string = baselineDeployment.primaryKey
-output BASELINE_DEPLOYMENT_PLATFORM string = teacherDeployment.platform
-
-// Azure OpenAI environment variables for scoring
-output SCORING_AZURE_OPENAI_ENDPOINT string = ai.outputs.openAiEndpoint
-output SCORING_AZURE_OPENAI_DEPLOYMENT string = scoringDeploymentName
-output SCORING_OPENAI_API_VERSION string = openAiApiVersion
-
+// Env variables are exported during postprocessing because bicep cannot conditionnally define outputs
+// The names of the outputs for deployments depend on whether the platforn is openai or serverless
+// For openai => AZURE_OPENAI_DEPLOYMENT and AZURE_OPENAI_ENDPOINT
+// For serverless => OPENAI_DEPLOYMENT and OPENAI_BASE_URL
 output DEPLOYMENTS array = ai.outputs.deployments

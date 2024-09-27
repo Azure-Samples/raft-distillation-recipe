@@ -19,4 +19,9 @@ EOM
 }
 
 touch ${env_file}
-dedup_env <(azd env get-values) ${env_file}
+
+# Export all azd env vars except DEPLOYMENTS which requires a special processing
+dedup_env <(azd env get-values | grep -v "DEPLOYMENTS=") ${env_file}
+
+# Process the azd DEPLOYMENTS env var and export the models env vars
+dedup_env <(azd env get-value DEPLOYMENTS | ./infra/azd/hooks/export_models.py) ${env_file}
