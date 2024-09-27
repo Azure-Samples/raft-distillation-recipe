@@ -36,7 +36,7 @@ deployments:
       name: gpt-4
       version: "turbo-2024-04-09"
     sku:
-      name: "Standard"
+      name: "GlobalStandard"
       capacity: 8
   - name: openai-gpt-4o
     platform: openai
@@ -57,7 +57,7 @@ deployments:
     model:
       format: OpenAI
       name: gpt-4o-mini
-      version: "2024-05-13"
+      version: "2024-07-18"
     sku:
       name: "GlobalStandard"
       capacity: 8
