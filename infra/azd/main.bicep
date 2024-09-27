@@ -6,8 +6,8 @@ targetScope = 'subscription'
 param environmentName string
 
 @minLength(1)
-@description('Primary location for all resources. Tested on westus3. Please submit PR if you find out it works in another region. Defaults westus3.')
-@allowed(['westus3'])
+@description('Primary location for all resources. Please submit PR if you find out it works in another region. Defaults westus3.')
+@allowed(['westus3', 'canadaeast'])
 @metadata({
   azd: {
     type: 'location'
