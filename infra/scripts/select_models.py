@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 
-import click as click
 import os
-from rich.prompt import Prompt
+import rich_click as click
 import yaml
 from pathlib import Path
 from dotenv import load_dotenv
@@ -83,7 +82,7 @@ if __name__ == '__main__':
 
     @click.command()
     @decorators(role_options)
-    @click.option('--set-azd-env/--no-set-azd-env', default=True, help='Set the selected deployment names as environment variables.')
+    @click.option('--set-azd-env/--no-set-azd-env', default=True, help='Set the selected deployment names as azd environment variables.')
     def select_models(set_azd_env, **kwargs):
         values = []
         for arg_name, arg_value in kwargs.items():
