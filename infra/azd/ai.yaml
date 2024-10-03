@@ -12,6 +12,9 @@ deployments:
     sku:
       name: "Standard"
       capacity: 100
+    regions:
+      - westus3
+      - northcentralus
   - name: meta-llama-3-1-405B-chat
     platform: serverless
     roles:
@@ -19,6 +22,8 @@ deployments:
     model:
       registry: azureml-meta
       name: Meta-Llama-3.1-405B-Instruct
+    regions:
+      - westus3
   - name: meta-llama-2-7b-chat
     platform: serverless
     roles:
@@ -27,6 +32,8 @@ deployments:
     model:
       registry: azureml-meta
       name: Meta-Llama-3.1-8B-Instruct
+    regions:
+      - westus3
   - name: openai-gpt-4
     platform: openai
     roles:
@@ -38,6 +45,8 @@ deployments:
     sku:
       name: "GlobalStandard"
       capacity: 8
+    regions:
+      - northcentralus
   - name: openai-gpt-4o
     platform: openai
     roles:
@@ -49,6 +58,8 @@ deployments:
     sku:
       name: "GlobalStandard"
       capacity: 8
+    regions:
+      - northcentralus
   - name: openai-gpt-4o-mini
     platform: openai
     roles:
@@ -61,3 +72,5 @@ deployments:
     sku:
       name: "GlobalStandard"
       capacity: 8
+    regions:
+      - northcentralus
