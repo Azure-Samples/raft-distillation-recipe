@@ -57,3 +57,14 @@ def file_sha256(filename):
 
     with open(filename, "rb", buffering=0) as f:
         return hashlib.file_digest(f, "sha256").hexdigest()
+
+def pretty_print_row(df, idx):
+    from IPython.display import display, Markdown
+    sample = df.iloc[idx]
+    md = ""
+    for name in df.columns.values:
+        value = sample[name]
+        value = value.replace("<DOCUMENT>", "`<DOCUMENT>`").replace("</DOCUMENT>", "`</DOCUMENT>`")
+        value = value.replace("<ANSWER>", "`<ANSWER>`").replace("##begin_quote##", "`##begin_quote##`").replace("##end_quote##", "`##end_quote##`")
+        md += "### " + name + "\n" + value + "\n"
+    display(Markdown(md))
