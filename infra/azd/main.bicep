@@ -167,6 +167,16 @@ module openaiRoleUser 'core/security/role.bicep' = if (!empty(principalId)) {
   }
 }
 
+module openaiRoleContributor 'core/security/role.bicep' = if (!empty(principalId)) {
+  scope: resourceGroup
+  name: 'user-openai-contributor'
+  params: {
+    principalId: principalId
+    roleDefinitionId: 'a001fd3d-188f-4b5d-821b-7da978bf7442' //Cognitive Services OpenAI Contributor
+    principalType: principalType
+  }
+}
+
 output AZURE_LOCATION string = location
 output AZURE_RESOURCE_GROUP string = resourceGroup.name
 
