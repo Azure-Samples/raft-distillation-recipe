@@ -130,10 +130,13 @@ if __name__ == '__main__':
     @click.command()
     @decorators(role_options)
     @click.option('--set-azd-env/--no-set-azd-env', default=True, help='Set the selected deployment names as azd environment variables.')
-    def select_models(set_azd_env, **kwargs):
+    @click.option('--region', '-r', multiple=True, default=None, help='Which regions to consider for supported models. Defaults to all regions.')
+    def select_models(set_azd_env, region,  **kwargs):
         click.echo(f"Select which models to use for distillation. Each selection narrows down future selections based on the region:")
         values = []
         regions = get_regions(ai_config.data)
+        if region:
+            regions = regions & set(region)
         for arg_name, arg_value in kwargs.items():
             role = arg_name.replace('_deployment', '')
             env_var_name = role_env_var_name(role)
