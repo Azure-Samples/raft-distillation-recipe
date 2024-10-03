@@ -23,12 +23,45 @@ load_azd_env()
 load_dotenv(".env")
 load_dotenv(".env.state")
 
+
+class Model:
+    def __init__(self, data) -> None:
+        self.data = data
+
+    def is_supported_in_regions(self, regions):
+        common = set(self.regions & set(regions))
+        return len(common) > 0
+    
+    @property
+    def regions(self):
+        return set(self.data['regions'])
+
+class Models:
+    def __init__(self, ai_config):
+        self.ai_config = ai_config
+
+    def __getitem__(self, key):
+        models = self.ai_config.data['deployments'] if 'deployments' in self.ai_config.data else []
+        val = next(filter(lambda d: d['name'] == key, models))
+        if not val:
+            raise Exception(f"Model {key} not found")
+        return Model(val)
+
+class AiConfig:
+    def __init__(self, data) -> None:
+        self.data = data
+
+    @property
+    def models(self):
+        return Models(self)
+
+
 def read_ai_config():
     dir = os.path.dirname(os.path.realpath(__file__))
     path=Path(dir, "../azd/ai.yaml")
     with open(path, 'r') as aiConfigFile:
         aiConfig = yaml.safe_load(aiConfigFile)
-    return aiConfig
+    return AiConfig(aiConfig)
 
 def get_roles(aiConfig):
     deployments=aiConfig['deployments'] if 'deployments' in aiConfig else []
@@ -36,11 +69,16 @@ def get_roles(aiConfig):
     roles.sort()
     return roles
 
-def get_deployment_names(ai_config, role='teacher'):
+def get_regions(aiConfig):
+    deployments=aiConfig['deployments'] if 'deployments' in aiConfig else []
+    regions = set([region for d in deployments for region in d['regions']])
+    return regions
+
+def get_deployment_names(ai_config, regions, role='teacher'):
     deployments=ai_config['deployments'] if 'deployments' in ai_config else []
 
-    teacherDeployments = filter(lambda d: role in d['roles'], deployments)
-    deploymentNames = map(lambda d: d['name'], teacherDeployments)
+    deployments = filter(lambda d: role in d['roles'] and Model(d).is_supported_in_regions(regions), deployments)
+    deploymentNames = map(lambda d: d['name'], deployments)
     return list(deploymentNames)
 
 def first(array):
@@ -48,10 +86,18 @@ def first(array):
 
 def select_model(role, names, default = None):
     import survey
-    default_index = names.index(default) if default else 0
+    default_index = names.index(default) if default and default in names else 0
     index = survey.routines.select(f"Pick a {role} deployment name: ", options = names, index = default_index)
     deployment=names[index]
     return deployment
+
+def select_region(regions, default = None):
+    import survey
+    regions = list(regions)
+    default_index = regions.index(default) if default and default in regions else 0
+    index = survey.routines.select(f"Pick a region: ", options = regions, index = default_index)
+    region=regions[index]
+    return region
 
 def decorators(decorators):
     def decorator(f):
@@ -60,9 +106,9 @@ def decorators(decorators):
         return f
     return decorator
 
-def role_option(ai_config, role):
+def role_option(ai_config, regions, role):
     return click.option(f'--{role}-deployment',
-        type=click.Choice(get_deployment_names(ai_config=ai_config, role=role)),
+        type=click.Choice(get_deployment_names(ai_config=ai_config, regions=regions, role=role)),
         default=os.getenv(role_env_var_name(role)),
         help=f'The name of the {role} deployment to select.'
         )
@@ -77,21 +123,28 @@ if __name__ == '__main__':
 
     # Read ai.yaml, collect roles and build a CLI option for each deployment model role
     ai_config = read_ai_config()
-    roles = get_roles(ai_config)
-    role_options = [role_option(ai_config, role) for role in roles]
+    roles = get_roles(ai_config.data)
+    regions = get_regions(ai_config.data)
+    role_options = [role_option(ai_config.data, regions, role) for role in roles]
 
     @click.command()
     @decorators(role_options)
     @click.option('--set-azd-env/--no-set-azd-env', default=True, help='Set the selected deployment names as azd environment variables.')
     def select_models(set_azd_env, **kwargs):
+        click.echo(f"Select which models to use for distillation. Each selection narrows down future selections based on the region:")
         values = []
+        regions = get_regions(ai_config.data)
         for arg_name, arg_value in kwargs.items():
             role = arg_name.replace('_deployment', '')
             env_var_name = role_env_var_name(role)
-            names = get_deployment_names(ai_config, role)
+            names = get_deployment_names(ai_config.data, regions, role)
             arg_value = select_model(role, names, default = arg_value)
+            regions = regions & ai_config.models[arg_value].regions
 
             values.append((env_var_name, arg_value))
+
+        region = select_region(regions, os.getenv("AZURE_LOCATION"))
+        values.append(("AZURE_LOCATION", region))
 
         if set_azd_env:
             click.echo()
