@@ -47,15 +47,25 @@ The easiest is to open the project in Codespaces (or in VS Code Dev Container lo
 azd auth login --use-device-code
 ```
 
-### Select models
+### Create azd environment
 
-Select which models you want to use for `teacher`, `student`, `embedding` and `baseline` (`baseline` usually equals `student`):
+This creates to create a new azd environment and is a pre-requisite to configuring models in the next step.
+
+```
+azd env new
+```
+
+### Configure models
+
+Configure which models you want to use for `teacher`, `student`, `embedding` and `baseline` (`baseline` usually equals `student`):
 
 If in Codespaces or Dev Container:
 
 ```
-select_models.py
+configure_models.py
 ```
+
+> **Note**: This command will narrow down models you can select as you progress through based on the regions they're available in so as to make sure the region you select at the end of the configuration has all the models available. You'll still have to make sure you have enough quotas in the region you select.
 
 <details>
 <summary>It not, virtual env instructions:</summary>
@@ -64,7 +74,7 @@ select_models.py
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-./infra/scripts/select_models.py
+./infra/scripts/configure_models.py
 ```
 </details>
 
