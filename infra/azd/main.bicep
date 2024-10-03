@@ -7,7 +7,7 @@ param environmentName string
 
 @minLength(1)
 @description('Primary location for all resources. Please submit PR if you find out it works in another region. Defaults westus3.')
-@allowed(['westus3', 'canadaeast'])
+@allowed(['westus3', 'canadaeast', 'eastus2', 'northcentralus'])
 @metadata({
   azd: {
     type: 'location'
