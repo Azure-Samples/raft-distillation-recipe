@@ -7,6 +7,7 @@ deployments:
       - embedding
     model:
       format: OpenAI
+      api: embeddings
       name: text-embedding-ada-002
       version: "2"
     sku:
@@ -20,6 +21,7 @@ deployments:
     roles:
       - teacher
     model:
+      api: chat
       registry: azureml-meta
       name: Meta-Llama-3.1-405B-Instruct
     regions:
@@ -30,6 +32,7 @@ deployments:
       - student
       - baseline
     model:
+      api: chat
       registry: azureml-meta
       name: Meta-Llama-3.1-8B-Instruct
     regions:
@@ -39,6 +42,7 @@ deployments:
     roles:
       - teacher
     model:
+      api: chat
       format: OpenAI
       name: gpt-4
       version: "turbo-2024-04-09"
@@ -52,6 +56,7 @@ deployments:
     roles:
       - teacher
     model:
+      api: chat
       format: OpenAI
       name: gpt-4o
       version: "2024-05-13"
@@ -66,6 +71,7 @@ deployments:
       - student
       - baseline
     model:
+      api: chat
       format: OpenAI
       name: gpt-4o-mini
       version: "2024-07-18"
