@@ -13,8 +13,11 @@ def do_test_openai_endpoint(env_prefix):
     endpoint = getenv(f"{env_prefix}_AZURE_OPENAI_ENDPOINT")
 
     if base_url:
-        api_key = getenv(f"{env_prefix}_OPENAI_API_KEY")
         model = getenv(f"{env_prefix}_OPENAI_DEPLOYMENT")
+        api_key = getenv(f"{env_prefix}_OPENAI_API_KEY")
+        assert model
+        assert api_key
+
         client = OpenAI(
             base_url = base_url,
             api_key = api_key,
@@ -22,6 +25,8 @@ def do_test_openai_endpoint(env_prefix):
     elif endpoint:
         model = getenv(f"{env_prefix}_AZURE_OPENAI_DEPLOYMENT")
         version = getenv(f"{env_prefix}_OPENAI_API_VERSION")
+        assert model
+        assert version
 
         # Authenticate using the default Azure credential chain
         azure_credential = DefaultAzureCredential()

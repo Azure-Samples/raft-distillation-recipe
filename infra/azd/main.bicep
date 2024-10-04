@@ -188,3 +188,6 @@ output APPINSIGHTS_CONNECTIONSTRING string = ai.outputs.applicationInsightsConne
 // For openai => AZURE_OPENAI_DEPLOYMENT and AZURE_OPENAI_ENDPOINT
 // For serverless => OPENAI_DEPLOYMENT and OPENAI_BASE_URL
 output DEPLOYMENTS array = ai.outputs.deployments
+
+// This is the Azure OpenAI endpoint used to fine tune student OpenAI models such as gpt-4o-mini
+output FINETUNE_AZURE_OPENAI_ENDPOINT string = ai.outputs.openAiEndpoint
