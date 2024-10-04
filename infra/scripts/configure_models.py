@@ -36,6 +36,11 @@ class Model:
     def regions(self):
         return set(self.data['regions'])
 
+    @property
+    def name(self):
+        model = self.data['model']
+        return model['name']
+
 class Models:
     def __init__(self, ai_config):
         self.ai_config = ai_config
@@ -109,12 +114,15 @@ def decorators(decorators):
 def role_option(ai_config, regions, role):
     return click.option(f'--{role}-deployment',
         type=click.Choice(get_deployment_names(ai_config=ai_config, regions=regions, role=role)),
-        default=os.getenv(role_env_var_name(role)),
+        default=os.getenv(role_deployment_env_var_name(role)),
         help=f'The name of the {role} deployment to select.'
         )
 
-def role_env_var_name(role):
+def role_deployment_env_var_name(role):
     return f'{role.upper()}_DEPLOYMENT_NAME'
+
+def role_model_env_var_name(role):
+    return f'{role.upper()}_MODEL_NAME'
 
 def azd_set_env(name, value):
     subprocess.run(['azd', 'env', 'set', name, value], shell=False, capture_output=True, text=True)
@@ -139,12 +147,13 @@ if __name__ == '__main__':
             regions = regions & set(region)
         for arg_name, arg_value in kwargs.items():
             role = arg_name.replace('_deployment', '')
-            env_var_name = role_env_var_name(role)
             names = get_deployment_names(ai_config.data, regions, role)
             arg_value = select_model(role, names, default = arg_value)
-            regions = regions & ai_config.models[arg_value].regions
+            model = ai_config.models[arg_value]
+            regions = regions & model.regions
 
-            values.append((env_var_name, arg_value))
+            values.append((role_deployment_env_var_name(role), arg_value))
+            values.append((role_model_env_var_name(role), model.name))
 
         region = select_region(regions, os.getenv("AZURE_LOCATION"))
         values.append(("AZURE_LOCATION", region))
