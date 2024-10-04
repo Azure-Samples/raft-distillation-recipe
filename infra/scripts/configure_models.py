@@ -28,6 +28,18 @@ class Model:
     def __init__(self, data) -> None:
         self.data = data
 
+    @property
+    def name(self):
+        return self.data['name']
+
+    @property
+    def api(self):
+        return self.data['api']
+
+class Descriptor:
+    def __init__(self, data) -> None:
+        self.data = data
+
     def is_supported_in_regions(self, regions):
         common = set(self.regions & set(regions))
         return len(common) > 0
@@ -37,11 +49,10 @@ class Model:
         return set(self.data['regions'])
 
     @property
-    def name(self):
-        model = self.data['model']
-        return model['name']
+    def model(self):
+        return Model(self.data['model'])
 
-class Models:
+class Descriptors:
     def __init__(self, ai_config):
         self.ai_config = ai_config
 
@@ -50,15 +61,15 @@ class Models:
         val = next(filter(lambda d: d['name'] == key, models))
         if not val:
             raise Exception(f"Model {key} not found")
-        return Model(val)
+        return Descriptor(val)
 
 class AiConfig:
     def __init__(self, data) -> None:
         self.data = data
 
     @property
-    def models(self):
-        return Models(self)
+    def descriptors(self):
+        return Descriptors(self)
 
 
 def read_ai_config():
@@ -82,7 +93,7 @@ def get_regions(aiConfig):
 def get_deployment_names(ai_config, regions, role='teacher'):
     deployments=ai_config['deployments'] if 'deployments' in ai_config else []
 
-    deployments = filter(lambda d: role in d['roles'] and Model(d).is_supported_in_regions(regions), deployments)
+    deployments = filter(lambda d: role in d['roles'] and Descriptor(d).is_supported_in_regions(regions), deployments)
     deploymentNames = map(lambda d: d['name'], deployments)
     return list(deploymentNames)
 
@@ -124,6 +135,9 @@ def role_deployment_env_var_name(role):
 def role_model_env_var_name(role):
     return f'{role.upper()}_MODEL_NAME'
 
+def role_model_api_env_var_name(role):
+    return f'{role.upper()}_MODEL_API'
+
 def azd_set_env(name, value):
     subprocess.run(['azd', 'env', 'set', name, value], shell=False, capture_output=True, text=True)
 
@@ -149,11 +163,12 @@ if __name__ == '__main__':
             role = arg_name.replace('_deployment', '')
             names = get_deployment_names(ai_config.data, regions, role)
             arg_value = select_model(role, names, default = arg_value)
-            model = ai_config.models[arg_value]
-            regions = regions & model.regions
+            descriptor = ai_config.descriptors[arg_value]
+            regions = regions & descriptor.regions
 
             values.append((role_deployment_env_var_name(role), arg_value))
-            values.append((role_model_env_var_name(role), model.name))
+            values.append((role_model_env_var_name(role), descriptor.model.name))
+            values.append((role_model_api_env_var_name(role), descriptor.model.api))
 
         region = select_region(regions, os.getenv("AZURE_LOCATION"))
         values.append(("AZURE_LOCATION", region))
