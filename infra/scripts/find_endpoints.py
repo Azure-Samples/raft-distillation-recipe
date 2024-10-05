@@ -104,7 +104,10 @@ def find_endpoints():
 
     model_list = []
     litellm_config = {
-        "model_list": model_list
+        "model_list": model_list,
+        "litellm_settings": {
+            "enable_azure_ad_token_refresh": "true"
+        }
     }
     for model_name, endpoint_list in endpoints.items():
         for endpoint in endpoint_list:
