@@ -45,3 +45,5 @@ rich==13.8.1
 rich-click==1.8.3
 
 survey==5.4.0
+
+litellm==1.48.14
