@@ -3,9 +3,7 @@ from azure.identity import DefaultAzureCredential
 from azure.identity import get_bearer_token_provider
 from os import getenv
 
-def do_test_openai_endpoint(env_prefix):
-    assert env_prefix is not None
-
+def create_client(env_prefix):
     # OpenAI API
     base_url = getenv(f"{env_prefix}_OPENAI_BASE_URL")
 
@@ -40,6 +38,14 @@ def do_test_openai_endpoint(env_prefix):
         )
     else:
         raise Exception("Couldn't find either OpenAI or Azure OpenAI env vars")
+
+    return (client, model)
+
+
+def do_test_openai_endpoint(env_prefix):
+    assert env_prefix is not None
+
+    (client, model) = create_client(env_prefix)
 
     response = client.chat.completions.create(
         model=model, 
