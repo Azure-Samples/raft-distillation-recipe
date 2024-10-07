@@ -58,6 +58,9 @@ def role_model_api_env_var_name(role):
 def azd_set_env(name, value):
     subprocess.run(['azd', 'env', 'set', name, value], shell=False, capture_output=True, text=True)
 
+def bold(text):
+    return click.style(text, bold=True)
+
 if __name__ == '__main__':
 
     # Read ai.yaml, collect roles and build a CLI option for each deployment model role
@@ -71,7 +74,7 @@ if __name__ == '__main__':
     @click.option('--set-azd-env/--no-set-azd-env', default=True, help='Set the selected deployment names as azd environment variables.')
     @click.option('--region', '-r', multiple=True, default=None, help='Restricts which regions to consider for models. Defaults to all regions.')
     def select_models(set_azd_env, region,  **kwargs):
-        roles_str = ", ".join(map(lambda r: click.style(r, bold=True), roles))
+        roles_str = ", ".join(map(lambda r: bold(r), roles))
         click.echo(f"Select which models to use for roles {roles_str}.")
         click.echo("Each selection narrows down future selections based on the region:")
         values = []
