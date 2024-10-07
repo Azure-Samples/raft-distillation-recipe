@@ -52,10 +52,14 @@ def get_oai_endpoint(account):
 def role_model_env_var_name(role):
     return f'{role.upper()}_MODEL_NAME'
 
+def role_deployment_name_env_var_name(role):
+    return f'{role.upper()}_DEPLOYMENT_NAME'
+
 def read_env_role(role):
     return {
         "role": role,
         "model_name": os.getenv(role_model_env_var_name(role)),
+        "deployment_name": os.getenv(role_deployment_name_env_var_name(role)),
     }
 
 def get_az_ad_signed_in_user():
@@ -101,23 +105,25 @@ def do_scan_azure():
                 deployment_properties = deployment['properties']
                 model = deployment_properties['model']
                 model_name = model['name']
+                model_version = model['version']
+                model_id = f"{model_name}@{model_version}"
                 rateLimits = get_deployment_rate_limits(deployment)
                 sku = deployment['sku']
                 sku_capacity = sku['capacity']
                 sku_name = sku['name']
 
     #            if model_name in model_names:
-                if not model_name in endpoints.keys():
-                    endpoints[model_name] = []
-                endpoints[model_name].append({
+                if not model_id in endpoints.keys():
+                    endpoints[model_id] = []
+                endpoints[model_id].append({
                     "deployment_name": deployment_name,
                     "sku_capacity": sku_capacity,
                     "sku_name": sku_name,
                     "endpoint": oai_endpoint
                 })
-                click.echo(f"Adding OpenAI endpoint: {model_name} {oai_endpoint} ({sku_capacity} {sku_name})")
+                click.echo(f"Adding OpenAI endpoint: {model_id} {oai_endpoint} ({sku_capacity} {sku_name})")
     #            else:
-    #                click.echo(f"Skipping OpenAI endpoint: {model_name} {oai_endpoint} ({sku_capacity} {sku_name})")
+    #                click.echo(f"Skipping OpenAI endpoint: {model_id} {oai_endpoint} ({sku_capacity} {sku_name})")
 
     model_list = []
     litellm_config = {
@@ -126,13 +132,13 @@ def do_scan_azure():
             "enable_azure_ad_token_refresh": "true"
         }
     }
-    for model_name, endpoint_list in endpoints.items():
+    for model_id, endpoint_list in endpoints.items():
         for endpoint in endpoint_list:
             deployment_name = endpoint['deployment_name']
             api_base = endpoint['endpoint']
             tpm = int(endpoint['sku_capacity']) * 1000
             model_list.append({
-                "model_name": model_name,
+                "model_name": model_id,
                 "litellm_params": {
                     "model": f"azure/{deployment_name}",
                     "api_base": api_base,
@@ -147,16 +153,17 @@ def export_proxy_endpoints():
     config = read_ai_config()
     roles = get_roles(config.data)
 
-    model_names = []
     env_values = []
     for role_name in roles:
         click.echo(f"Exporting env vars for role {role_name}")
         role = read_env_role(role_name)
         model_name = role['model_name']
-        model_names.append(model_name)
+        deployment_name = role['deployment_name']
+        model_version = config.descriptors[deployment_name].model.version
+        model_id = f"{model_name}@{model_version}"
         env_values.append((f"{role_name.upper()}_OPENAI_BASE_URL", "http://localhost:4000/"))
         env_values.append((f"{role_name.upper()}_OPENAI_API_KEY", "DUMMY"))
-        env_values.append((f"{role_name.upper()}_OPENAI_DEPLOYMENT", model_name))
+        env_values.append((f"{role_name.upper()}_OPENAI_DEPLOYMENT", model_id))
 
     with open('.env.scan', 'w') as f:
         for name, value in env_values:
