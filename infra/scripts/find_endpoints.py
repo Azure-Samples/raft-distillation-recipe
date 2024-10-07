@@ -87,15 +87,25 @@ def has_role_assignment(user_id, scope, role):
 
 openai_user_role_id = '5e0bd9bd-7b93-4f28-af87-19fc36ad61bd' # Cognitive Services OpenAI User
 
+def bold(text):
+    return click.style(text, bold=True)
+
+def red(text):
+    return click.style(text, bold=True, fg='red')
+
+def green(text):
+    return click.style(text, bold=True, fg='green')
+
 def do_scan_azure():
     click.echo(f"Scanning Azure for OpenAI endpoints")
     accounts = list_cognitive_services_accounts()
     endpoints = {}
+    stats = {}
     signed_in_user_id = get_az_ad_signed_in_user()
     for account_digest in accounts:
         account_id = account_digest['id']
         if has_role_assignment(signed_in_user_id, account_id, openai_user_role_id):
-            click.echo(f"OpenAI resource with role assignment: {account_id}")
+            click.echo(f"Found OpenAI resource: {account_id} - {green("GRANTED")}")
             account = get_cognitive_services_account(account_id)
             oai_endpoint = get_oai_endpoint(account)
             #click.echo(f"OpenAI endpoint: {oai_endpoint}")
@@ -115,15 +125,24 @@ def do_scan_azure():
     #            if model_name in model_names:
                 if not model_id in endpoints.keys():
                     endpoints[model_id] = []
+                    stats[model_id] = {
+                        "total_capacity": 0
+                    }
                 endpoints[model_id].append({
                     "deployment_name": deployment_name,
                     "sku_capacity": sku_capacity,
                     "sku_name": sku_name,
                     "endpoint": oai_endpoint
                 })
-                click.echo(f"Adding OpenAI endpoint: {model_id} {oai_endpoint} ({sku_capacity} {sku_name})")
-    #            else:
-    #                click.echo(f"Skipping OpenAI endpoint: {model_id} {oai_endpoint} ({sku_capacity} {sku_name})")
+                stats[model_id]['total_capacity'] += sku_capacity
+                click.echo(f" - Adding OpenAI endpoint: {bold(model_id)} ({sku_capacity} {sku_name})")
+        else:
+            click.echo(f"Found OpenAI resource: {account_id} - {red("DENIED")}")
+
+
+    click.echo("Total capacity by model:")
+    for model_id, stat in stats.items():
+        click.echo(f" - {model_id}: {stat['total_capacity']}")
 
     model_list = []
     litellm_config = {
