@@ -5,5 +5,5 @@ from utils import do_test_openai_endpoint
 load_dotenv(".env")
 load_dotenv(".env.state")
 
-def test_scoring():
-    do_test_openai_endpoint("SCORING")
+def test_judge():
+    do_test_openai_endpoint("JUDGE")

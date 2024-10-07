@@ -41,7 +41,7 @@ deployments:
     platform: openai
     roles:
       - teacher
-      - scoring
+      - judge
     model:
       api: chat
       format: OpenAI

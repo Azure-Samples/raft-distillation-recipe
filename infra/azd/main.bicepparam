@@ -20,6 +20,6 @@ param useApplicationInsights = bool(readEnvironmentVariable('USE_APPLICATION_INS
 
 // Model selection
 param embeddingDeploymentName = readEnvironmentVariable('EMBEDDING_DEPLOYMENT_NAME', 'openai-text-embedding-ada-002')
-param scoringDeploymentName = readEnvironmentVariable('SCORING_DEPLOYMENT_NAME', 'openai-gpt-4')
+param judgeDeploymentName = readEnvironmentVariable('JUDGE_DEPLOYMENT_NAME', 'openai-gpt-4')
 param teacherDeploymentName = readEnvironmentVariable('TEACHER_DEPLOYMENT_NAME', 'meta-llama-3-1-405B-chat')
 param baselineDeploymentName = readEnvironmentVariable('BASELINE_DEPLOYMENT_NAME', 'meta-llama-2-7b-chat')

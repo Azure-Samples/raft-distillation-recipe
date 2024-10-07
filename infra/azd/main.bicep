@@ -43,8 +43,8 @@ param openAiApiVersion string = '2023-07-01-preview'
 @description('The name of the embedding model deployment')
 param embeddingDeploymentName string = 'openai-text-embedding-ada-002'
 
-@description('The name of the scoring model deployment')
-param scoringDeploymentName string = 'openai-gpt-4'
+@description('The name of the judge model deployment')
+param judgeDeploymentName string = 'openai-gpt-4'
 
 @description('The name of the teacher model deployment')
 param teacherDeploymentName string = 'meta-llama-3-1-405B-chat'
@@ -56,7 +56,7 @@ param baselineDeploymentName string = 'meta-llama-2-7b-chat'
 var allDeployments = array(contains(aiConfig, 'deployments') ? aiConfig.deployments : [])
 
 // List of model names selected for deployment
-var selectedDeploymentNames = [embeddingDeploymentName, scoringDeploymentName, teacherDeploymentName, baselineDeploymentName]
+var selectedDeploymentNames = [embeddingDeploymentName, judgeDeploymentName, teacherDeploymentName, baselineDeploymentName]
 
 // Mapping from deployment name to role
 var roles = mapValues(toObject([
@@ -65,8 +65,8 @@ var roles = mapValues(toObject([
     role: 'embedding'
   }
   {
-    name: scoringDeploymentName
-    role: 'scoring'
+    name: judgeDeploymentName
+    role: 'judge'
   }
   {
     name: teacherDeploymentName
