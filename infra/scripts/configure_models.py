@@ -20,7 +20,7 @@ def first(array):
 def select_model(role, names, default = None):
     import survey
     default_index = names.index(default) if default and default in names else 0
-    index = survey.routines.select(f"Pick a {role} deployment name: ", options = names, index = default_index)
+    index = survey.routines.select(f"Pick a {click.style(role, bold=True)} deployment name: ", options = names, index = default_index)
     deployment=names[index]
     return deployment
 
@@ -71,7 +71,9 @@ if __name__ == '__main__':
     @click.option('--set-azd-env/--no-set-azd-env', default=True, help='Set the selected deployment names as azd environment variables.')
     @click.option('--region', '-r', multiple=True, default=None, help='Restricts which regions to consider for models. Defaults to all regions.')
     def select_models(set_azd_env, region,  **kwargs):
-        click.echo(f"Select which models to use. Each selection narrows down future selections based on the region:")
+        roles_str = ", ".join(map(lambda r: click.style(r, bold=True), roles))
+        click.echo(f"Select which models to use for roles {roles_str}.")
+        click.echo("Each selection narrows down future selections based on the region:")
         values = []
         regions = get_regions(ai_config.data)
         if region:
