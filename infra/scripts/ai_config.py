@@ -14,6 +14,10 @@ class Model:
     def api(self):
         return self.data['api']
 
+    @property
+    def version(self):
+        return self.data['version']
+
 class Descriptor:
     def __init__(self, data) -> None:
         self.data = data
