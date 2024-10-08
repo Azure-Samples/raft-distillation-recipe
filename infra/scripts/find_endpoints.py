@@ -104,8 +104,11 @@ def do_scan_azure():
     signed_in_user_id = get_az_ad_signed_in_user()
     for account_digest in accounts:
         account_id = account_digest['id']
-        if has_role_assignment(signed_in_user_id, account_id, openai_user_role_id):
-            click.echo(f"Found OpenAI resource: {account_id} - {green("GRANTED")}")
+        resource_group = account_digest['resourceGroup']
+        account_name = account_digest['name']
+        granted = has_role_assignment(signed_in_user_id, account_id, openai_user_role_id)
+        click.echo(f"Found OpenAI resource: {bold(account_name)} in {bold(resource_group)} - {green("GRANTED") if granted else red("DENIED")}")
+        if granted:
             account = get_cognitive_services_account(account_id)
             oai_endpoint = get_oai_endpoint(account)
             #click.echo(f"OpenAI endpoint: {oai_endpoint}")
@@ -126,7 +129,8 @@ def do_scan_azure():
                 if not model_id in endpoints.keys():
                     endpoints[model_id] = []
                     stats[model_id] = {
-                        "total_capacity": 0
+                        "total_capacity": 0,
+                        "total_endpoints": 0
                     }
                 endpoints[model_id].append({
                     "deployment_name": deployment_name,
@@ -135,9 +139,8 @@ def do_scan_azure():
                     "endpoint": oai_endpoint
                 })
                 stats[model_id]['total_capacity'] += sku_capacity
+                stats[model_id]['total_endpoints'] += 1
                 click.echo(f" - Adding OpenAI endpoint: {bold(model_id)} ({sku_capacity} {sku_name})")
-        else:
-            click.echo(f"Found OpenAI resource: {account_id} - {red("DENIED")}")
 
 
     click.echo("Total capacity by model:")
