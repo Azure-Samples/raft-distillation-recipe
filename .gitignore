@@ -10,3 +10,4 @@ __pycache__
 work/
 .cache/
 litellm_config.yaml
+.ipynb_checkpoints/
