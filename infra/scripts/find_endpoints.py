@@ -111,7 +111,6 @@ def do_scan_azure():
         if granted:
             account = get_cognitive_services_account(account_id)
             oai_endpoint = get_oai_endpoint(account)
-            #click.echo(f"OpenAI endpoint: {oai_endpoint}")
             deployments = get_deployments(account_id)
             for deployment in deployments:
                 deployment_name = deployment['name']
@@ -171,6 +170,29 @@ def do_scan_azure():
 
     return litellm_config
 
+def redact_secret(key, value):
+    """Redact a value from the logs if the key indicates that the value contains a keyword such as KEY or SECRET."""
+    if "KEY" in key or "SECRET" in key:
+        return value[:4] + "*" * (len(value) - 4)
+    return value
+
+def update_env_file(env_file, kv_tuples):
+    """Update the env file with the key and value."""
+    from pathlib import Path
+    from dotenv import dotenv_values
+
+    data = {}
+    if Path(env_file).exists() and Path(env_file).is_file():
+        data = dotenv_values(env_file)
+
+    for key, value in kv_tuples:
+        data[key] = value
+        click.echo(f"Updating env file {env_file} with {key}={redact_secret(key, value)}")
+
+    with open(env_file, "w") as f:
+        for k, v in data.items():
+            f.write(f"{k}={v}\n")
+
 def export_proxy_endpoints():
     config = read_ai_config()
     roles = get_roles(config.data)
@@ -187,11 +209,7 @@ def export_proxy_endpoints():
         env_values.append((f"{role_name.upper()}_OPENAI_API_KEY", "DUMMY"))
         env_values.append((f"{role_name.upper()}_OPENAI_DEPLOYMENT", model_id))
 
-    with open('.env.scan', 'w') as f:
-        for name, value in env_values:
-            f.write(f'{name}={value}\n')
-    #        azd_set_env(name, value)
-
+    update_env_file(".env.state", env_values)
 
 @click.command()
 @click.option('--scan-azure/--no-scan-azure', default=True, help='Whether to scan Azure searching for OpenAI endpoints.')
