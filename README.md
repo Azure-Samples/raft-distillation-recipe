@@ -58,7 +58,9 @@ azd env new
 
 ### Configure models & region
 
-Configure which **models** you want to use for `teacher`, `student`, `embedding` and `baseline` (`baseline` usually equals `student`) as well as which **region** to deploy the project to:
+Configure which **models** you want to use for `teacher`, `student`, `embedding` and `baseline` (`baseline` usually equals `student`) as well as which **region** to deploy the project to.
+
+> **Note**: Both OpenAI models and Azure Marketplace models are supported.
 
 If in Codespaces or Dev Container:
 
@@ -85,7 +87,10 @@ pip install -r requirements.txt
 azd up
 ```
 
-When asked about the region, enter `westus3`, it is currently the only region supported for Model As A Service Serverless deployment.
+> **Note**: You won't be asked to which region to deploy as the previous `configure_models.py` scripts configured the AZD region based on your model and region selection.
+
+> **Note**: Both OpenAI models and Azure Marketplace models are supported. The azd infrastructure code will take care of provisioning the infrastructure required to support either of them.
+
 
 The post provisioning [tests.sh](./infra/azd/hooks/tests.sh) script will run infra integration tests to make sure everything is deployed successfully.
 
