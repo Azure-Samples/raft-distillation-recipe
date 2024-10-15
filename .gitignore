@@ -11,3 +11,4 @@ work/
 .cache/
 litellm_config.yaml
 .ipynb_checkpoints/
+*.cast
