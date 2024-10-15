@@ -46,8 +46,9 @@ rich-click==1.8.3
 
 survey==5.4.0
 
-litellm[proxy]==1.48.14
-
 # Additional Promptflow Evaluators
 nltk==3.9.1
 rouge_score==0.1.2
+
+# llmscout to proxy multiple backend models
+git+https://github.com/cedricvidal/llmscout.git@main
