@@ -1,5 +1,4 @@
-# Llama 3.1 405B distillation using UC Berkeley's RAFT recipe on Azure AI Serverless
-
+# LLM Distillation Recipe using UC Berkeley's RAFT on Azure AI Serverless
 
 <p align="center">
     <img src="./doc/gorilla-distillation.jpeg" width="75%" />
