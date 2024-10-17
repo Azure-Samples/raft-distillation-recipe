@@ -82,8 +82,12 @@ if __name__ == '__main__':
         if region:
             regions = regions & set(region)
         for arg_name, arg_value in kwargs.items():
+            if not regions:
+                raise Exception(f"No regions available. Check ai.yaml")
             role = arg_name.replace('_deployment', '')
             names = get_deployment_names(ai_config.data, regions, role)
+            if not names:
+                raise Exception(f"No {role} model could be found in regions {', '.join(regions)}. Check ai.yaml")
             arg_value = select_model(role, names, default = arg_value)
             descriptor = ai_config.descriptors[arg_value]
             regions = regions & descriptor.regions
