@@ -52,6 +52,7 @@ deployments:
       capacity: 8
     regions:
       - northcentralus
+      - westus3
   - name: openai-gpt-4o
     platform: openai
     roles:
