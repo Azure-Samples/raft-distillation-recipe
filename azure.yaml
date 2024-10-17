@@ -10,3 +10,15 @@ hooks:
       run: ./infra/azd/hooks/postprovision.sh
       interactive: true
       continueOnError: false
+  test:
+    posix:
+      shell: sh
+      run: ./infra/azd/hooks/tests.sh
+      interactive: true
+      continueOnError: false
+  export_env:
+    posix:
+      shell: sh
+      run: ./infra/azd/hooks/export_env.sh
+      interactive: true
+      continueOnError: false

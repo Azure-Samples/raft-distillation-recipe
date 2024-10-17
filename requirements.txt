@@ -1,6 +1,6 @@
 ipykernel==6.29.5
 datasets==2.16.1
-openai==1.30.1
+openai==1.51.0
 PyPDF2==3.0.1
 transformers==4.38.0
 langchain-experimental==0.0.64
@@ -13,11 +13,11 @@ pytest==8.1.2
 Wand==0.6.13
 strictyaml==1.7.3
 
-promptflow-core==1.14.0
-promptflow-devkit==1.14.0
-promptflow-tracing==1.14.0
-promptflow-azure==1.14.0
-promptflow-evals==0.3.1
+promptflow-core==1.16.0
+promptflow-devkit==1.16.0
+promptflow-tracing==1.16.0
+promptflow-azure==1.16.0
+promptflow-evals==0.3.2
 
 # Fine-tuning
 azure-ai-ml==1.19.0
@@ -39,3 +39,16 @@ azure-mgmt-resource
 # Infra tests
 pytest==8.1.2
 requests==2.32.3
+
+click==8.1.7
+rich==13.8.1
+rich-click==1.8.3
+
+survey==5.4.0
+
+# Additional Promptflow Evaluators
+nltk==3.9.1
+rouge_score==0.1.2
+
+# llmscout to proxy multiple backend models
+git+https://github.com/cedricvidal/llmscout.git@main

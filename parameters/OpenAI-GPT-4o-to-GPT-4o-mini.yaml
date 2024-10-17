@@ -1,0 +1,5 @@
+teacher_model_name: "Meta-Llama-3.1-405B-Instruct"
+registry_name: "azureml-meta"
+model_name: Meta-Llama-3.1-8B-Instruct
+format: chat
+learning_rate: 0.00002

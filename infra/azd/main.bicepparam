@@ -17,3 +17,9 @@ param logAnalyticsWorkspaceName = readEnvironmentVariable('AZURE_LOG_ANALYTICS_W
 
 param useContainerRegistry = bool(readEnvironmentVariable('USE_CONTAINER_REGISTRY', 'false'))
 param useApplicationInsights = bool(readEnvironmentVariable('USE_APPLICATION_INSIGHTS', 'false'))
+
+// Model selection
+param embeddingDeploymentName = readEnvironmentVariable('EMBEDDING_DEPLOYMENT_NAME', 'openai-text-embedding-ada-002')
+param judgeDeploymentName = readEnvironmentVariable('JUDGE_DEPLOYMENT_NAME', 'openai-gpt-4')
+param teacherDeploymentName = readEnvironmentVariable('TEACHER_DEPLOYMENT_NAME', 'meta-llama-3-1-405B-chat')
+param baselineDeploymentName = readEnvironmentVariable('BASELINE_DEPLOYMENT_NAME', 'meta-llama-2-7b-chat')

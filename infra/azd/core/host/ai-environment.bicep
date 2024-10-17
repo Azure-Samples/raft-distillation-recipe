@@ -23,6 +23,8 @@ param applicationInsightsName string = ''
 @description('The Container Registry resource name.')
 param containerRegistryName string = ''
 param tags object = {}
+@description('The OpenAI API version')
+param openaiApiVersion string = ''
 
 var openaiDeployments = filter(deployments, deployment => toLower(deployment.platform) == 'openai')
 var serverlessDeployments = filter(deployments, deployment => toLower(deployment.platform) == 'serverless')
@@ -85,6 +87,14 @@ module serverlessDeployment '../ai/serverless-deployment.bicep' = [for deploymen
   ]
 }]
 
+var serverlessDeploymentArray = [for (deployment, i) in serverlessDeployments: {
+  name: deployment.name
+  deployment: deployment
+}]
+
+// Index serverless deployments by their names
+var serverlessDeploymentByName = mapValues(toObject(serverlessDeploymentArray, arg => arg.name), arg => arg.deployment)
+
 // Outputs
 // Resource Group
 output resourceGroupName string = resourceGroup().name
@@ -123,3 +133,15 @@ output serverlessDeployments array = [for (deployment, i) in serverlessDeploymen
   primaryKey: serverlessDeployment[i].outputs.primaryKey
   secondaryKey: serverlessDeployment[i].outputs.secondaryKey
 }]
+
+output openaiDeployments array = [for (deployment, i) in openaiDeployments: {
+  name: deployment.name
+  endpointUri: hubDependencies.outputs.openAiEndpoint
+}]
+
+output deployments array = [for (deployment, i) in deployments: union(deployment, {
+  endpointUri: deployment.platform == 'serverless' ? serverlessDeploymentByName[deployment.name].outputs.endpointUri : hubDependencies.outputs.openAiEndpoint
+  primaryKey: deployment.platform == 'serverless' ? serverlessDeploymentByName[deployment.name].outputs.primaryKey : ''
+  secondaryKey: deployment.platform == 'serverless' ? serverlessDeploymentByName[deployment.name].outputs.secondaryKey : ''
+  apiVersion: openaiApiVersion
+})]

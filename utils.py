@@ -13,21 +13,23 @@ def get_pdf_image(doc_path):
         img.alpha_channel = "remove"
     return img
 
-
-def update_state(key, value):
-    """Update the .env.state state file with the key and value."""
+def update_env_file(env_file, key, value):
+    """Update the env file with the key and value."""
     from pathlib import Path
     from dotenv import dotenv_values
 
     data = {}
-    state_filename = ".env.state"
-    if Path(state_filename).exists() and Path(state_filename).is_file():
-        data = dotenv_values(state_filename)
+    if Path(env_file).exists() and Path(env_file).is_file():
+        data = dotenv_values(env_file)
     data[key] = value
     print(f"Updating state file with {key}={redact_secret(key, value)}")
-    with open(state_filename, "w") as f:
+    with open(env_file, "w") as f:
         for k, v in data.items():
             f.write(f"{k}={v}\n")
+
+def update_state(key, value):
+    """Update the .env.state state file with the key and value."""
+    update_env_file(".env.state", key, value)
 
 def redact_secret(key, value):
     """Redact a value from the logs if the key indicates that the value contains a keyword such as KEY or SECRET."""
@@ -57,3 +59,14 @@ def file_sha256(filename):
 
     with open(filename, "rb", buffering=0) as f:
         return hashlib.file_digest(f, "sha256").hexdigest()
+
+def pretty_print_row(df, idx):
+    from IPython.display import display, Markdown
+    sample = df.iloc[idx]
+    md = ""
+    for name in df.columns.values:
+        value = sample[name]
+        value = value.replace("<DOCUMENT>", "`<DOCUMENT>`").replace("</DOCUMENT>", "`</DOCUMENT>`")
+        value = value.replace("<ANSWER>", "`<ANSWER>`").replace("##begin_quote##", "`##begin_quote##`").replace("##end_quote##", "`##end_quote##`")
+        md += "### " + name + "\n" + value + "\n"
+    display(Markdown(md))

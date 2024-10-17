@@ -9,3 +9,6 @@ __pycache__
 .env.*
 work/
 .cache/
+litellm_config.yaml
+.ipynb_checkpoints/
+*.cast

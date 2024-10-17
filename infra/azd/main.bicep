@@ -6,8 +6,7 @@ targetScope = 'subscription'
 param environmentName string
 
 @minLength(1)
-@description('Primary location for all resources. Tested on westus3. Please submit PR if you find out it works in another region. Defaults westus3.')
-@allowed(['westus3'])
+@description('Primary location for all resources')
 @metadata({
   azd: {
     type: 'location'
@@ -42,16 +41,50 @@ param resourceGroupName string = ''
 param openAiApiVersion string = '2023-07-01-preview'
 
 @description('The name of the embedding model deployment')
-param embeddingDeploymentName string = 'text-embedding-ada-002'
+param embeddingDeploymentName string = 'openai-text-embedding-ada-002'
 
-@description('The name of the scoring model deployment')
-param scoringDeploymentName string = 'gpt-4'
+@description('The name of the judge model deployment')
+param judgeDeploymentName string = 'openai-gpt-4'
 
 @description('The name of the teacher model deployment')
-param teacherDeploymentName string = 'raft-teacher-llama-3-1-405B-chat'
+param teacherDeploymentName string = 'meta-llama-3-1-405B-chat'
 
 @description('The name of the baseline model deployment')
-param baselineDeploymentName string = 'raft-baseline-llama-2-7b-chat'
+param baselineDeploymentName string = 'meta-llama-2-7b-chat'
+
+// List of models we know how to deploy
+var allDeployments = array(contains(aiConfig, 'deployments') ? aiConfig.deployments : [])
+
+// List of model names selected for deployment
+var selectedDeploymentNames = [embeddingDeploymentName, judgeDeploymentName, teacherDeploymentName, baselineDeploymentName]
+
+// Mapping from deployment name to role
+var roles = mapValues(toObject([
+  {
+    name: embeddingDeploymentName
+    role: 'embedding'
+  }
+  {
+    name: judgeDeploymentName
+    role: 'judge'
+  }
+  {
+    name: teacherDeploymentName
+    role: 'teacher'
+  }
+  {
+    name: baselineDeploymentName
+    role: 'baseline'
+  }
+], e => e.name), v => v.role)
+
+// List of models selected for deployment
+var filteredDeployments = filter(allDeployments, deployment => contains(selectedDeploymentNames, toLower(deployment.name)))
+
+// Assign role to each deployment
+var selectedDeployments = [for deployment in filteredDeployments: union(deployment, {
+  role: roles[deployment.name]
+})]
 
 @description('Id of the user or app to assign application roles')
 param principalId string = ''
@@ -97,7 +130,7 @@ module ai 'core/host/ai-environment.bicep' = {
       : '${abbrs.storageStorageAccounts}${resourceToken}'
     openAiName: !empty(openAiName) ? openAiName : 'aoai-${resourceToken}'
     openAiConnectionName: !empty(openAiConnectionName) ? openAiConnectionName : 'aoai-connection'
-    deployments: array(contains(aiConfig, 'deployments') ? aiConfig.deployments : [])
+    deployments: selectedDeployments
     logAnalyticsName: !useApplicationInsights
       ? ''
       : !empty(logAnalyticsWorkspaceName)
@@ -109,6 +142,7 @@ module ai 'core/host/ai-environment.bicep' = {
     containerRegistryName: !useContainerRegistry
       ? ''
       : !empty(containerRegistryName) ? containerRegistryName : '${abbrs.containerRegistryRegistries}${resourceToken}'
+    openaiApiVersion: openAiApiVersion
   }
 }
 
@@ -132,11 +166,15 @@ module openaiRoleUser 'core/security/role.bicep' = if (!empty(principalId)) {
   }
 }
 
-var teacherDeployment = length(ai.outputs.serverlessDeployments) == 1 
-  ? ai.outputs.serverlessDeployments[0] 
-  : first(filter(ai.outputs.serverlessDeployments, deployment => deployment.name == teacherDeploymentName))
-
-var baselineDeployment = first(filter(ai.outputs.serverlessDeployments, deployment => deployment.name == baselineDeploymentName))
+module openaiRoleContributor 'core/security/role.bicep' = if (!empty(principalId)) {
+  scope: resourceGroup
+  name: 'user-openai-contributor'
+  params: {
+    principalId: principalId
+    roleDefinitionId: 'a001fd3d-188f-4b5d-821b-7da978bf7442' //Cognitive Services OpenAI Contributor
+    principalType: principalType
+  }
+}
 
 output AZURE_LOCATION string = location
 output AZURE_RESOURCE_GROUP string = resourceGroup.name
@@ -145,24 +183,11 @@ output AZURE_WORKSPACE_NAME string = ai.outputs.projectName
 
 output APPINSIGHTS_CONNECTIONSTRING string = ai.outputs.applicationInsightsConnectionString
 
-output OPENAI_TYPE string = 'azure'
+// Env variables are exported during postprocessing because bicep cannot conditionnally define outputs
+// The names of the outputs for deployments depend on whether the platforn is openai or serverless
+// For openai => AZURE_OPENAI_DEPLOYMENT and AZURE_OPENAI_ENDPOINT
+// For serverless => OPENAI_DEPLOYMENT and OPENAI_BASE_URL
+output DEPLOYMENTS array = ai.outputs.deployments
 
-// Azure OpenAI environment variables for embeddings
-output EMBEDDING_AZURE_OPENAI_ENDPOINT string = ai.outputs.openAiEndpoint
-output EMBEDDING_AZURE_OPENAI_DEPLOYMENT string = embeddingDeploymentName
-output EMBEDDING_OPENAI_API_VERSION string = openAiApiVersion
-
-// OpenAI environment variables
-output COMPLETION_OPENAI_BASE_URL string = teacherDeployment.endpointUri
-output COMPLETION_OPENAI_DEPLOYMENT string = teacherDeployment.name
-output COMPLETION_OPENAI_API_KEY string = teacherDeployment.primaryKey
-
-// OpenAI environment variables
-output BASELINE_OPENAI_BASE_URL string = baselineDeployment.endpointUri
-output BASELINE_OPENAI_DEPLOYMENT string = baselineDeployment.name
-output BASELINE_OPENAI_API_KEY string = baselineDeployment.primaryKey
-
-// Azure OpenAI environment variables for scoring
-output SCORING_AZURE_OPENAI_ENDPOINT string = ai.outputs.openAiEndpoint
-output SCORING_AZURE_OPENAI_DEPLOYMENT string = scoringDeploymentName
-output SCORING_OPENAI_API_VERSION string = openAiApiVersion
+// This is the Azure OpenAI endpoint used to fine tune student OpenAI models such as gpt-4o-mini
+output FINETUNE_AZURE_OPENAI_ENDPOINT string = ai.outputs.openAiEndpoint

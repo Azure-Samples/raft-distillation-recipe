@@ -40,7 +40,11 @@ resource deployment 'Microsoft.CognitiveServices/accounts/deployments@2023-05-01
   parent: account
   name: deployment.name
   properties: {
-    model: deployment.model
+    model: {
+      format: deployment.model.format
+      name: deployment.model.name
+      version: deployment.model.version
+    }
     raiPolicyName: contains(deployment, 'raiPolicyName') ? deployment.raiPolicyName : null
   }
   sku: contains(deployment, 'sku') ? deployment.sku : {

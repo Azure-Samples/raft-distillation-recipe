@@ -1,5 +1,4 @@
-# Llama 3.1 405B distillation using UC Berkeley's RAFT recipe on Azure AI Serverless
-
+# LLM Distillation Recipe using UC Berkeley's RAFT on Azure AI Serverless
 
 <p align="center">
     <img src="./doc/gorilla-distillation.jpeg" width="75%" />
@@ -10,11 +9,12 @@ This repository is a recipe that will walk you through doing LLM distillation on
 
 >  **Distillation** is a process where a large pre-trained model (often referred to as the "teacher" model) is used to train a smaller, more efficient model (known as the "student" model). The goal is to transfer the knowledge from the teacher to the student, enabling the student to achieve comparable performance while being more resource-efficient.
 
-This recipe uses [Meta Llama 3.1 405B](https://aka.ms/c/learn-deploy-llama) as a teacher model deployed on [Azure AI](https://aka.ms/c/learn-ai) to generate a synthetic dataset using [UC Berkeley's Gorilla](https://aka.ms/ucb-gorilla) project RAFT method (see [blog post](https://aka.ms/raft-blog)). The synthetically generated dataset will then be used to finetune a student model, Meta Llama 3.1 8B or another supported model. Finally, we will deploy the fine-tuned model and evaluate its performance compared to a baseline model.
+This recipe can use either [OpenAI GPT-4o](https://learn.microsoft.com/en-us/azure/ai-services/openai/concepts/models?tabs=python-secure#gpt-4o-and-gpt-4-turbo) or [Meta Llama 3.1 405B](https://aka.ms/c/learn-deploy-llama) as a teacher model deployed on [Azure AI](https://aka.ms/c/learn-ai) to generate a synthetic dataset using [UC Berkeley's Gorilla](https://aka.ms/ucb-gorilla) project RAFT method (see [blog post](https://aka.ms/raft-blog)). The synthetically generated dataset will then be used to finetune a student model such as OpenAI GPT-4o-mini or Meta Llama 3.1 8B or another supported model. Finally, we will deploy the fine-tuned model and evaluate its performance compared to a baseline model.
 
 <table>
     <tr>
         <td><img src="./doc/microsoft-logo.png" style="max-height:100px; height: auto;"/></td>
+        <td><img src="./doc/openai-logo.png" style="max-height:100px; height: auto;"/></td>
         <td><img src="./doc/meta-logo.png" style="max-height:100px; height: auto;" /></td>
         <td><img src="./doc/ucb-logo.png" style="max-height:100px; height: auto;" /></td>
     </tr>
@@ -41,19 +41,55 @@ The easiest is to open the project in Codespaces (or in VS Code Dev Container lo
 
 [![Open in Dev Containers](https://img.shields.io/static/v1?style=for-the-badge&label=Dev%20Containers&message=Open&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/Azure-Samples/raft-distillation-recipe)
 
-Login using azd
+### Login using azd
 
 ```
 azd auth login --use-device-code
 ```
 
-Provision the infrastructure
+### Create azd environment
+
+This creates to create a new azd environment and is a pre-requisite to configuring models in the next step.
+
+```
+azd env new
+```
+
+### Configure models & region
+
+Configure which **models** you want to use for `teacher`, `student`, `embedding` and `baseline` (`baseline` usually equals `student`) as well as which **region** to deploy the project to.
+
+> **Note**: Both OpenAI models and Azure Marketplace models are supported.
+
+If in Codespaces or Dev Container:
+
+```
+configure_models.py
+```
+
+> **Note**: This command will narrow down models you can select as you progress through based on the regions they're available in so as to make sure the **region** you select at the end of the configuration has all the models available. You'll still have to make sure you have enough quotas in the region you select.
+
+<details>
+<summary>It not, virtual env instructions:</summary>
+
+```
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+./infra/scripts/configure_models.py
+```
+</details>
+
+### Provision the infrastructure
 
 ```
 azd up
 ```
 
-When asked about the region, enter `westus3`, it is currently the only region supported for Model As A Service Serverless deployment.
+> **Note**: You won't be asked to which region to deploy as the previous `configure_models.py` scripts configured the AZD region based on your model and region selection.
+
+> **Note**: Both OpenAI models and Azure Marketplace models are supported. The azd infrastructure code will take care of provisioning the infrastructure required to support either of them.
+
 
 The post provisioning [tests.sh](./infra/azd/hooks/tests.sh) script will run infra integration tests to make sure everything is deployed successfully.
 
@@ -66,7 +102,7 @@ The easiest is to provision the infrastructure using azd but you can of course a
 <details>
 <summary>Environment variable configuration</summary>
 
-Those environment variables are expected by RAFT cli scripts. They are suffixed by the purpose of the model `COMPLETION`, `EMBEDDING`, `BASELINE` followed by either standard **OpenAI** or **Azure OpenAI** variable names.
+Those environment variables are expected by RAFT cli scripts. They are suffixed by the purpose of the model `COMPLETION`, `EMBEDDING`, `BASELINE`, `JUDGE` followed by either standard **OpenAI** or **Azure OpenAI** variable names.
 
 Choose for each model purpose either one of the following API styles:
 
@@ -84,6 +120,9 @@ Choose for each model purpose either one of the following API styles:
 | `BASELINE_OPENAI_API_KEY`       | API Key for the baseline model  |
 | `BASELINE_OPENAI_BASE_URL`      | Base URL for the baseline model  |
 | `BASELINE_OPENAI_DEPLOYMENT`    | Deployment name for the baseline model  |
+| `JUDGE_OPENAI_API_KEY`       | API Key for the judge model  |
+| `JUDGE_OPENAI_BASE_URL`      | Base URL for the judge model  |
+| `JUDGE_OPENAI_DEPLOYMENT`    | Deployment name for the judge model  |
 
 </details>
 
@@ -104,6 +143,10 @@ Choose for each model purpose either one of the following API styles:
 | `BASELINE_AZURE_OPENAI_ENDPOINT`     | Endpoint for the baseline model  |
 | `BASELINE_AZURE_OPENAI_DEPLOYMENT`   | Deployment name for the baseline model  |
 | `BASELINE_OPENAI_API_VERSION`        | API Version for the baseline model  |
+| `JUDGE_AZURE_OPENAI_API_KEY`      | API Key for the judge model  |
+| `JUDGE_AZURE_OPENAI_ENDPOINT`     | Endpoint for the judge model  |
+| `JUDGE_AZURE_OPENAI_DEPLOYMENT`   | Deployment name for the judge model  |
+| `JUDGE_OPENAI_API_VERSION`        | API Version for the judge model  |
 
 </details>
 
@@ -111,14 +154,16 @@ Choose for each model purpose either one of the following API styles:
 
 ## Notebooks
 
-This repository is organized in 4 notebooks, one for each step of the process:
+This repository is organized in 2 generic notebooks + 2 OpenAI specific notebooks + Azure MaaS (Model As A Service) specific notebooks, one for each step of the process:
 
-| Notebook      | Explanation      |
-| ------------- | ---------------- |
-| [1_gen.ipynb](./1_gen.ipynb) | Generate a finetuning dataset using RAFT |
-| [2_finetune.ipynb](./2_finetune.ipynb) | Fine tune a base model using the generated dataset |
-| [3_deploy.ipynb](./3_deploy.ipynb) | Deploy the fine tuned model |
-| [4_eval.ipynb](./4_eval.ipynb) | Evaluate the fine tuned model |
+| Notebook      | OpenAI | Azure MaaS | Explanation      |
+| ------------- | ---------------- | ---------------- | ---------------- |
+| [1_gen.ipynb](./1_gen.ipynb) | ✔️ | ✔️ | Generate a finetuning dataset using RAFT |
+| [2_finetune.ipynb](./2_finetune.ipynb) | | ✔️ | Fine tune a base model using the generated dataset |
+| [2_finetune_oai.ipynb](./2_finetune.ipynb) | ✔️ | | Fine tune a base model using the generated dataset |
+| [3_deploy.ipynb](./3_deploy.ipynb) | | ✔️ | Deploy the fine tuned model |
+| [3_deploy_oai.ipynb](./3_deploy.ipynb) | ✔️ | | Deploy the fine tuned model |
+| [4_eval.ipynb](./4_eval.ipynb) | ✔️ | ✔️ | Evaluate the fine tuned model |
 
 ## Run time and costs
 
@@ -127,8 +172,8 @@ This repository is organized in 4 notebooks, one for each step of the process:
 | Notebook      | Run time      | Cost      |
 | ------------- | ---------------- | ---------------- |
 | [1_gen.ipynb](./1_gen.ipynb) | From 5 minutes for the sample to multiple days for bigger domains | From $1 for the sample to $50 or more for bigger domains  |
-| [2_finetune.ipynb](./2_finetune.ipynb) | Roughly 1.5 hours | Roughly $50 |
-| [3_deploy.ipynb](./3_deploy.ipynb) | < 10 minutes | < $1 |
+| [2_finetune[_oai].ipynb](./2_finetune.ipynb) | Roughly 1.5 hours | Roughly $50 |
+| [3_deploy[_oai].ipynb](./3_deploy.ipynb) | < 10 minutes | < $1 |
 | [4_eval.ipynb](./4_eval.ipynb) | From 5 minutes for the sample to multiple days for bigger domains | From $1 for the sample to $50 or more for bigger domains |
 
 ## Dormant infrastructure costs
