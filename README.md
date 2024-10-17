@@ -156,7 +156,7 @@ Choose for each model purpose either one of the following API styles:
 
 This repository is organized in 2 generic notebooks + 2 OpenAI specific notebooks + Azure MaaS (Model As A Service) specific notebooks, one for each step of the process:
 
-| Notebook      | OpenAI | Azure MaaS | Explanation      |
+| Notebook      | Azure OpenAI | Azure MaaS | Explanation      |
 | ------------- | ---------------- | ---------------- | ---------------- |
 | [1_gen.ipynb](./1_gen.ipynb) | ✔️ | ✔️ | Generate a finetuning dataset using RAFT |
 | [2_finetune.ipynb](./2_finetune.ipynb) | | ✔️ | Fine tune a base model using the generated dataset |
