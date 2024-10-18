@@ -95,7 +95,8 @@ param runningOnGh string = ''
 @description('Whether the deployment is running on Azure DevOps Pipeline')
 param runningOnAdo string = ''
 
-var resourceToken = toLower(uniqueString(subscription().id, environmentName, location))
+var resourceToken = take(toLower(uniqueString(subscription().id, environmentName, location)), 7)
+var postfix = '${resourceToken}-${environmentName}'
 var tags = { 'azd-env-name': environmentName }
 
 resource resourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
@@ -110,7 +111,7 @@ module managedIdentity 'core/security/managed-identity.bicep' = {
   name: 'managed-identity'
   scope: resourceGroup
   params: {
-    name: 'id-${resourceToken}'
+    name: 'id-${postfix}'
     location: location
     tags: tags
   }
@@ -122,26 +123,26 @@ module ai 'core/host/ai-environment.bicep' = {
   params: {
     location: location
     tags: tags
-    hubName: !empty(aiHubName) ? aiHubName : 'ai-hub-${resourceToken}'
-    projectName: !empty(aiProjectName) ? aiProjectName : 'ai-project-${resourceToken}'
-    keyVaultName: !empty(keyVaultName) ? keyVaultName : '${abbrs.keyVaultVaults}${resourceToken}'
+    hubName: !empty(aiHubName) ? aiHubName : take('ai-hub-${postfix}', 32)
+    projectName: !empty(aiProjectName) ? aiProjectName : take('ai-project-${postfix}', 32)
+    keyVaultName: !empty(keyVaultName) ? keyVaultName : take('${abbrs.keyVaultVaults}${postfix}', 24)
     storageAccountName: !empty(storageAccountName)
       ? storageAccountName
-      : '${abbrs.storageStorageAccounts}${resourceToken}'
-    openAiName: !empty(openAiName) ? openAiName : 'aoai-${resourceToken}'
+      : take(replace('${abbrs.storageStorageAccounts}${postfix}', '-', ''), 24)
+    openAiName: !empty(openAiName) ? openAiName : 'aoai-${postfix}'
     openAiConnectionName: !empty(openAiConnectionName) ? openAiConnectionName : 'aoai-connection'
     deployments: selectedDeployments
     logAnalyticsName: !useApplicationInsights
       ? ''
       : !empty(logAnalyticsWorkspaceName)
           ? logAnalyticsWorkspaceName
-          : '${abbrs.operationalInsightsWorkspaces}${resourceToken}'
+          : '${abbrs.operationalInsightsWorkspaces}${postfix}'
     applicationInsightsName: !useApplicationInsights
       ? ''
-      : !empty(applicationInsightsName) ? applicationInsightsName : '${abbrs.insightsComponents}${resourceToken}'
+      : !empty(applicationInsightsName) ? applicationInsightsName : '${abbrs.insightsComponents}${postfix}'
     containerRegistryName: !useContainerRegistry
       ? ''
-      : !empty(containerRegistryName) ? containerRegistryName : '${abbrs.containerRegistryRegistries}${resourceToken}'
+      : !empty(containerRegistryName) ? containerRegistryName : '${abbrs.containerRegistryRegistries}${postfix}'
     openaiApiVersion: openAiApiVersion
   }
 }
