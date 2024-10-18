@@ -41,6 +41,12 @@ The easiest is to open the project in Codespaces (or in VS Code Dev Container lo
 
 [![Open in Dev Containers](https://img.shields.io/static/v1?style=for-the-badge&label=Dev%20Containers&message=Open&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/Azure-Samples/raft-distillation-recipe)
 
+### Setup recording
+
+Here's a recording of setting up the repository once in a Dev Container or Codespaces to get an idea of what it looks like before trying yourself:
+
+[![asciicast](https://asciinema.org/a/zxPLMks2CsOx2b7KTBrcmZlcj.svg)](https://asciinema.org/a/zxPLMks2CsOx2b7KTBrcmZlcj)
+
 ### Login using azd
 
 ```
@@ -49,7 +55,7 @@ azd auth login --use-device-code
 
 ### Create azd environment
 
-This creates to create a new azd environment and is a pre-requisite to configuring models in the next step.
+This creates a new azd environment and is a pre-requisite to configuring models in the next step.
 
 ```
 azd env new
