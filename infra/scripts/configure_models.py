@@ -7,7 +7,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 import subprocess
 from ai_config import *
-from azd_utils import *
+from dotenv_azd import load_azd_env
 
 load_azd_env()
 load_dotenv(".env")

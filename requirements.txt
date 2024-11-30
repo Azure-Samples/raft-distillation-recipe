@@ -43,5 +43,7 @@ rich-click==1.8.3
 
 survey==5.4.0
 
+dotenv-azd==0.2.0
+
 # llmscout to proxy multiple backend models
 git+https://github.com/cedricvidal/llmscout.git@main
