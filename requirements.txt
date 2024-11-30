@@ -19,7 +19,7 @@ azure-ai-inference==1.0.0b5
 # Fine-tuning
 azure-ai-ml==1.19.0
 azure-identity==1.17.1
-mlflow==2.15.1
+mlflow==2.16.0
 azureml-mlflow==1.57.0
 matplotlib==3.9.1
 numpy==1.26.4
