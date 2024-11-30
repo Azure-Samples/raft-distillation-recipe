@@ -13,11 +13,8 @@ pytest==8.1.2
 Wand==0.6.13
 strictyaml==1.7.3
 
-promptflow-core==1.16.0
-promptflow-devkit==1.16.0
-promptflow-tracing==1.16.0
-promptflow-azure==1.16.0
-promptflow-evals==0.3.2
+azure-ai-evaluation[remote]==1.0.0b5
+azure-ai-inference==1.0.0b5
 
 # Fine-tuning
 azure-ai-ml==1.19.0
@@ -45,10 +42,6 @@ rich==13.8.1
 rich-click==1.8.3
 
 survey==5.4.0
-
-# Additional Promptflow Evaluators
-nltk==3.9.1
-rouge_score==0.1.2
 
 # llmscout to proxy multiple backend models
 git+https://github.com/cedricvidal/llmscout.git@main
